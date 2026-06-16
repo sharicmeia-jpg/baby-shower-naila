@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 <meta charset="UTF-8">
 <title>Baby Shower Naila 💕</title>
@@ -37,11 +38,12 @@ button {
   cursor:pointer;
 }
 
-/* 🧸 bebé (IMAGEN SEGURA) */
+/* 🧸 bebé (YA PERSONALIZADA) */
 .bebe {
-  width:180px;
-  border-radius:20px;
+  width:220px;
+  border-radius:25px;
   margin-bottom:10px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
 }
 
 /* ☁️ nubes */
@@ -111,9 +113,8 @@ src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 <img class="cloud" style="top:120px;left:-80px;animation-delay:5s"
 src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 
-<!-- 🧸 BEBÉ (SIN ERROR GARANTIZADO) -->
-<img class="bebe"
-src="https://cdn-icons-png.flaticon.com/512/3082/3082060.png">
+<!-- 🧸 BEBÉ PERSONALIZADA (TU IMAGEN) -->
+<img class="bebe" src="bebe.png">
 
 <h1>🎀 Baby Shower de Naila 🎀</h1>
 <p>Estás invitada a una experiencia mágica 💕</p>
@@ -199,7 +200,6 @@ box.onclick=()=>{
 
 if(abiertas[i]) return;
 
-/* ✨ animación */
 box.classList.add("opening");
 
 setTimeout(()=>{
@@ -207,7 +207,6 @@ setTimeout(()=>{
 const premio=premios[Math.floor(Math.random()*premios.length)];
 
 box.innerText=premio;
-
 box.style.background="#ff4d88";
 box.style.color="white";
 box.style.pointerEvents="none";
@@ -220,10 +219,7 @@ spread:70,
 origin:{y:0.6}
 });
 
-abiertas[i]={
-nombre,
-premio
-};
+abiertas[i]={nombre,premio};
 
 localStorage.setItem("abiertas",JSON.stringify(abiertas));
 
@@ -232,7 +228,6 @@ actualizarPanel();
 box.classList.remove("opening");
 
 },700);
-
 };
 
 grid.appendChild(box);
