@@ -27,6 +27,7 @@ body {
     background:linear-gradient(#ffd6e8,#fff0f5);
     padding:40px;
     box-sizing:border-box;
+    overflow:hidden;
 }
 .bebe{
     width:500px;
@@ -123,6 +124,36 @@ cursor:pointer;
   font-size:12px;
   display:none;
 }
+
+/* 📱 Diseño para celular */
+@media(max-width:900px){
+
+  #invitacion{
+    flex-direction:column;
+    gap:30px;
+    text-align:center;
+  }
+
+  .contenido{
+    text-align:center;
+  }
+
+  .contenido h1{
+    font-size:38px;
+  }
+
+  .contenido p{
+    font-size:20px;
+  }
+
+  .bebe{
+    width:320px;
+    max-width:90%;
+  }
+
+}
+
+</style>
 </style>
 </head>
 
