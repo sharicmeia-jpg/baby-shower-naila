@@ -75,12 +75,12 @@ button {
   border-radius:8px;
   cursor:pointer;
   font-size:11px;
-  transition:all 0.4s ease;
+  transition:all 0.3s ease;
 }
 
 /* ✨ animación abrir */
 .box.opening {
-  transform:scale(1.2) rotate(5deg);
+  transform:scale(1.2);
   background:#ffb3d1;
 }
 
@@ -104,14 +104,16 @@ button {
 <!-- 🎀 INVITACIÓN -->
 <div id="invitacion">
 
+<!-- ☁️ nubes -->
 <img class="cloud" style="top:20px;left:0"
 src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 
 <img class="cloud" style="top:120px;left:-80px;animation-delay:5s"
 src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 
+<!-- 🧸 bebé (CORREGIDA) -->
 <img class="bebe"
-src="https://i.imgur.com/3ZQ3ZQb.png">
+src="https://i.imgur.com/8Q1Q9QH.png">
 
 <h1>🎀 Baby Shower de Naila 🎀</h1>
 <p>Estás invitada a una experiencia mágica 💕</p>
@@ -160,7 +162,7 @@ let premios=[
 "🛁 Kit baño bebé",
 "👕 Ropa bebé",
 "🧸 Juguetes",
-"🛏️ Cobija",
+"🛏️ Cobija suave",
 "🧴 Aseo bebé",
 "🎀 Set ropa",
 "🧦 Medias + baberos",
@@ -197,7 +199,7 @@ box.onclick=()=>{
 
 if(abiertas[i]) return;
 
-/* ✨ ANIMACIÓN DE APERTURA */
+/* ✨ animación */
 box.classList.add("opening");
 
 setTimeout(()=>{
@@ -229,7 +231,7 @@ actualizarPanel();
 
 box.classList.remove("opening");
 
-},800); // ⏱️ tiempo de apertura
+},700);
 
 };
 
@@ -241,8 +243,7 @@ function actualizarPanel(){
 registros.innerHTML="";
 Object.keys(abiertas).forEach(k=>{
 let d=document.createElement("div");
-d.innerHTML=
-`🎁 Caja ${k}<br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
+d.innerHTML=`🎁 Caja ${k}<br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
 registros.appendChild(d);
 });
 }
