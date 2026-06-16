@@ -57,11 +57,6 @@
       padding: 15px;
       cursor: pointer;
       font-size: 12px;
-      transition: 0.3s;
-    }
-
-    .box:hover {
-      background: #ffccdd;
     }
 
     #login {
@@ -73,7 +68,6 @@
       border-radius: 10px;
       border: 2px solid #ff99bb;
       width: 200px;
-      text-align: center;
     }
 
     button {
@@ -84,6 +78,33 @@
       border-radius: 10px;
       cursor: pointer;
     }
+
+    /* 📊 PANEL ADMIN */
+    #panel {
+      position: fixed;
+      right: 10px;
+      top: 10px;
+      width: 280px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border: 2px solid #ff4d88;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 12px;
+      display: none;
+    }
+
+    #panel h3 {
+      margin-top: 0;
+      color: #ff4d88;
+    }
+
+    .registro {
+      border-bottom: 1px solid #ddd;
+      padding: 5px 0;
+      text-align: left;
+    }
   </style>
 </head>
 
@@ -92,7 +113,6 @@
 <!-- 🎀 INVITACIÓN -->
 <div id="invitacion">
   <h1>🎀 Baby Shower de Naila 🎀</h1>
-  <p>Estás invitada a una experiencia mágica 💕</p>
   <button onclick="entrar()">Entrar 💌</button>
 </div>
 
@@ -100,17 +120,22 @@
 <div id="juego">
 
   <h1>🎀 Baby Shower Naila 🎀</h1>
-  <p>Elige una cajita y descubre tu regalo 💝</p>
 
   <div id="login">
     <p>Escribe tu nombre 💕</p>
-    <input type="text" id="nombre" placeholder="Tu nombre">
+    <input id="nombre" placeholder="Tu nombre">
     <br><br>
     <button onclick="iniciarJuego()">Entrar 🎁</button>
   </div>
 
   <div class="grid" id="grid"></div>
 
+</div>
+
+<!-- 📊 PANEL ADMIN -->
+<div id="panel">
+  <h3>📊 Registro de premios</h3>
+  <div id="registros"></div>
 </div>
 
 <!-- 🔊 SONIDO -->
@@ -124,42 +149,30 @@ const invitacion = document.getElementById("invitacion");
 const juego = document.getElementById("juego");
 const grid = document.getElementById("grid");
 const login = document.getElementById("login");
+const panel = document.getElementById("panel");
+const registrosDiv = document.getElementById("registros");
 
-let nombreJugador = localStorage.getItem("nombre") || "";
+let nombreJugador = "";
 let abiertas = JSON.parse(localStorage.getItem("abiertas")) || {};
 
-// 🎁 KITS ORGANIZADOS (100 cajitas reales con variedad)
 let premios = [
-  "🍼 Kit recién nacido: pañales + pañitos + tetero",
-  "🍼 Kit higiene: pañitos + crema + jabón bebé",
-  "🛁 Kit baño: tina + toalla + shampoo bebé",
-  "👕 Kit ropa básica: 3 mudas + medias",
-  "👕 Kit ropa completo: conjunto + gorro + babero",
-  "🧸 Kit juguetes: peluche + sonajero + mordedor",
-  "🧸 Kit estimulación: móvil + juguete + peluche",
-  "🛏️ Kit descanso: cobija + sábana + manta",
-  "🧴 Kit cuidado piel: crema + aceite + jabón",
-  "🧦 Kit básico: medias + baberos + gorro",
-  "👶 Kit hospital: salida + manta + gorrito",
-  "🧺 Kit semanal ropa: 7 mudas de ropa",
-  "🎀 Kit princesa: vestidito + gorro + cobija",
-  "🍼 Kit alimentación: teteros + cepillo limpieza",
-  "🛁 Kit baño completo: tina + toalla + shampoo",
-  "🏆 Kit especial: coche de bebé 💖",
-  "🏆 Kit lujo: cuna portátil + ropa + cobija",
-  "🏆 Kit premium: canasta completa bebé 💎",
-  "🧴 Kit higiene completo: pañitos + crema + jabón",
-  "👕 Kit moda bebé: outfits + accesorios",
-  "🧸 Kit diversión: juguetes + peluche + mordedor",
-  "🛏️ Kit sueño: cobija + almohada + peluche",
-  "🧦 Kit diario: medias + baberos",
-  "🍼 Kit lactancia: tetero + limpiador",
-  "🎁 Kit sorpresa especial 💝"
+  "🍼 Kit bebé",
+  "🛁 Kit baño",
+  "👕 Ropa bebé",
+  "🧸 Juguetes",
+  "🛏️ Cobija",
+  "🧴 Aseo bebé",
+  "🧦 Medias",
+  "🎀 Set completo",
+  "🏆 Coche bebé",
+  "🏆 Cuna bebé"
 ];
 
 function entrar() {
   invitacion.style.display = "none";
   juego.style.display = "block";
+  panel.style.display = "block"; // 👈 ACTIVA PANEL
+  cargarPanel();
 }
 
 function iniciarJuego() {
@@ -171,8 +184,6 @@ function iniciarJuego() {
   }
 
   nombreJugador = nombre;
-  localStorage.setItem("nombre", nombreJugador);
-
   login.style.display = "none";
 
   crearCajitas();
@@ -184,9 +195,8 @@ function crearCajitas() {
     box.classList.add("box");
 
     if (abiertas[i]) {
-      box.innerText = abiertas[i].premio;
-      box.style.background = "#ff4d88";
-      box.style.color = "white";
+      box.innerText = "🎁";
+      box.style.background = "#ddd";
       box.style.pointerEvents = "none";
     } else {
       box.innerText = "🎁";
@@ -197,10 +207,7 @@ function crearCajitas() {
 
       const premio = premios[Math.floor(Math.random() * premios.length)];
 
-      box.innerText = premio;
-      box.style.background = "#ff4d88";
-      box.style.color = "white";
-      box.style.pointerEvents = "none";
+      box.innerText = "✔";
 
       document.getElementById("sonido").play();
 
@@ -211,23 +218,37 @@ function crearCajitas() {
       });
 
       abiertas[i] = {
-        premio: premio,
-        jugador: nombreJugador
+        jugador: nombreJugador,
+        premio: premio
       };
 
       localStorage.setItem("abiertas", JSON.stringify(abiertas));
+
+      actualizarPanel();
     });
 
     grid.appendChild(box);
   }
 }
 
-// auto iniciar si ya hay usuario
-if (nombreJugador) {
-  invitacion.style.display = "none";
-  juego.style.display = "block";
-  login.style.display = "none";
-  crearCajitas();
+// 📊 PANEL
+function cargarPanel() {
+  actualizarPanel();
+}
+
+function actualizarPanel() {
+  registrosDiv.innerHTML = "";
+
+  Object.keys(abiertas).forEach((key) => {
+    const item = document.createElement("div");
+    item.classList.add("registro");
+    item.innerHTML = `
+      🎁 Caja ${key}<br>
+      👤 ${abiertas[key].jugador}<br>
+      🏆 ${abiertas[key].premio}
+    `;
+    registrosDiv.appendChild(item);
+  });
 }
 
 </script>
