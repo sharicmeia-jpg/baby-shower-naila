@@ -20,6 +20,7 @@ body {
 #invitacion{
     min-height:100vh;
     display:flex;
+    flex-direction:row;
     justify-content:space-evenly;
     align-items:center;
     gap:100px;
@@ -52,8 +53,11 @@ cursor:pointer;
 }
 /* 🧸 bebé */
 .contenido{
-  max-width:500px;
-  text-align:left;
+    max-width:500px;
+    text-align:left;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 
 .contenido h1{
@@ -170,13 +174,18 @@ src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 <!-- 🧸 BEBÉ -->
 <img class="bebe" src="img/bebe.png">
 
-<div class="contenido">
-  <h1>🎀 Baby Shower de Naila 🎀</h1>
-  <p>Estás invitada a una experiencia mágica 💕</p>
-  <button onclick="entrar()">Entrar 💌</button>
-</div>
+<div id="invitacion">
 
-</div> <!-- Cierra #invitacion -->
+  <img class="bebe" src="img/bebe.png">
+
+  <div class="contenido">
+    <h1>🎀 Naila Victoria 🎀</h1>
+    <h2>Te doy la bienvenida a mi Baby Shower 💕</h2>
+    <p>Estás invitado/@ a una experiencia mágica ✨</p>
+    <button onclick="entrar()">Entrar 💌</button>
+  </div>
+
+</div>
 
 <!-- 🎁 JUEGO -->
 <div id="juego">
