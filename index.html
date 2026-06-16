@@ -106,18 +106,24 @@ cursor:pointer;
 }
 
 .box {
-  background:white;
-  border:2px solid #ff99bb;
+  background:#ffd6e8;
+  border:2px solid #ff4d88;
   padding:10px;
-  border-radius:8px;
+  border-radius:10px;
   cursor:pointer;
   font-size:11px;
   transition:all 0.3s ease;
+  box-shadow:0 3px 8px rgba(255,77,136,0.3);
 }
 
+.box:hover{
+  transform:scale(1.05);
+  background:#ffb3d1;
+}
 .box.opening {
   transform:scale(1.2);
-  background:#ffb3d1;
+  background:#ff4d88;
+  color:white;
 }
 
 /* 📊 panel */
