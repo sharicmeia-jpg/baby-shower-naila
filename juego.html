@@ -1,15 +1,98 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cajitas Sorpresa</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cajitas Sorpresa</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#fff0f5;
+}
+
+h1{
+    text-align:center;
+    color:#d86b9b;
+    margin-top:30px;
+}
+
+p{
+    text-align:center;
+    color:#777;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:15px;
+    max-width:1000px;
+    margin:auto;
+    padding:30px;
+}
+
+.caja{
+
+    background:white;
+
+    height:90px;
+
+    border-radius:20px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:45px;
+
+    cursor:pointer;
+
+    box-shadow:0px 0px 10px pink;
+
+    transition:.3s;
+
+}
+
+.caja:hover{
+
+transform:scale(1.08);
+
+}
+
+</style>
+
 </head>
+
 <body>
 
-<h1>🎀 Cajitas Sorpresa de Naila Victoria 🎀</h1>
+<h1>🎀 Elige una cajita sorpresa 🎀</h1>
 
-<p>Muy pronto aquí aparecerán las 100 cajitas.</p>
+<p>Haz clic sobre una cajita y descubre tu regalo.</p>
+
+<div class="grid" id="grid"></div>
+
+<script>
+
+const grid=document.getElementById("grid");
+
+for(let i=1;i<=100;i++){
+
+const caja=document.createElement("div");
+
+caja.className="caja";
+
+caja.innerHTML="🎁";
+
+grid.appendChild(caja);
+
+}
+
+</script>
 
 </body>
+
 </html>
