@@ -1,254 +1,224 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Baby Shower Naila 💕</title>
+<meta charset="UTF-8">
+<title>Baby Shower Naila 💕</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #ffe6f0;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #ffe6f0;
+  text-align: center;
+}
 
-    h1 {
-      color: #ff4d88;
-    }
+/* 🎀 INVITACIÓN */
+#invitacion {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-    #invitacion {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #ffd1e6, #fff0f5);
-    }
+  background: linear-gradient(#ffd6e8, #fff0f5);
+  position: relative;
+  overflow: hidden;
+}
 
-    #invitacion button {
-      background: #ff4d88;
-      color: white;
-      border: none;
-      padding: 15px 25px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
+/* ☁️ nubes */
+.cloud {
+  position: absolute;
+  width: 120px;
+  opacity: 0.5;
+  animation: move 25s linear infinite;
+}
 
-    #juego {
-      display: none;
-      padding: 20px;
-    }
+@keyframes move {
+  from {transform: translateX(-200px);}
+  to {transform: translateX(120%);}
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 10px;
-      max-width: 600px;
-      margin: auto;
-    }
+h1 { color:#ff4d88; }
 
-    .box {
-      background: #fff;
-      border: 2px solid #ff99bb;
-      border-radius: 10px;
-      padding: 15px;
-      cursor: pointer;
-      font-size: 12px;
-    }
+button {
+  background:#ff4d88;
+  color:white;
+  border:none;
+  padding:12px 20px;
+  border-radius:15px;
+  cursor:pointer;
+}
 
-    #login {
-      margin-bottom: 20px;
-    }
+/* 🧸 imagen bebé */
+.bebe {
+  width:180px;
+  border-radius:20px;
+  margin-bottom:10px;
+}
 
-    #nombre {
-      padding: 10px;
-      border-radius: 10px;
-      border: 2px solid #ff99bb;
-      width: 200px;
-    }
+/* 🎁 juego */
+#juego { display:none; padding:20px; }
 
-    button {
-      background: #ff4d88;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  gap:8px;
+  max-width:600px;
+  margin:auto;
+}
 
-    /* 📊 PANEL ADMIN */
-    #panel {
-      position: fixed;
-      right: 10px;
-      top: 10px;
-      width: 280px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background: white;
-      border: 2px solid #ff4d88;
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 12px;
-      display: none;
-    }
+.box {
+  background:white;
+  border:2px solid #ff99bb;
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:12px;
+}
 
-    #panel h3 {
-      margin-top: 0;
-      color: #ff4d88;
-    }
-
-    .registro {
-      border-bottom: 1px solid #ddd;
-      padding: 5px 0;
-      text-align: left;
-    }
-  </style>
+/* 📊 panel */
+#panel {
+  position:fixed;
+  right:10px;
+  top:10px;
+  width:250px;
+  background:white;
+  border:2px solid #ff4d88;
+  padding:10px;
+  font-size:12px;
+  display:none;
+}
+</style>
 </head>
 
 <body>
 
 <!-- 🎀 INVITACIÓN -->
 <div id="invitacion">
+
+  <!-- ☁️ nubes -->
+  <img class="cloud" style="top:20px; left:0;"
+  src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
+
+  <img class="cloud" style="top:120px; left:-100px; animation-delay:5s;"
+  src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
+
+  <!-- 🧸 bebé con oso -->
+  <img class="bebe"
+  src="https://i.imgur.com/3ZQ3ZQb.png">
+
   <h1>🎀 Baby Shower de Naila 🎀</h1>
+  <p>Estás invitada a una experiencia mágica 💕</p>
+
   <button onclick="entrar()">Entrar 💌</button>
 </div>
 
 <!-- 🎁 JUEGO -->
 <div id="juego">
 
-  <h1>🎀 Baby Shower Naila 🎀</h1>
+<h1>🎀 Baby Shower Naila 🎀</h1>
 
-  <div id="login">
-    <p>Escribe tu nombre 💕</p>
-    <input id="nombre" placeholder="Tu nombre">
-    <br><br>
-    <button onclick="iniciarJuego()">Entrar 🎁</button>
-  </div>
+<div id="login">
+<input id="nombre" placeholder="Tu nombre">
+<br><br>
+<button onclick="iniciarJuego()">Entrar 🎁</button>
+</div>
 
-  <div class="grid" id="grid"></div>
+<div class="grid" id="grid"></div>
 
 </div>
 
-<!-- 📊 PANEL ADMIN -->
+<!-- 📊 PANEL -->
 <div id="panel">
-  <h3>📊 Registro de premios</h3>
-  <div id="registros"></div>
+<h3>📊 Registro</h3>
+<div id="registros"></div>
 </div>
 
 <!-- 🔊 SONIDO -->
 <audio id="sonido">
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a4b1b1.mp3?filename=magic-coin-1-189817.mp3">
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a4b1b1.mp3">
 </audio>
 
 <script>
 
-const invitacion = document.getElementById("invitacion");
-const juego = document.getElementById("juego");
-const grid = document.getElementById("grid");
-const login = document.getElementById("login");
-const panel = document.getElementById("panel");
-const registrosDiv = document.getElementById("registros");
+const invitacion=document.getElementById("invitacion");
+const juego=document.getElementById("juego");
+const grid=document.getElementById("grid");
+const panel=document.getElementById("panel");
+const registros=document.getElementById("registros");
 
-let nombreJugador = "";
-let abiertas = JSON.parse(localStorage.getItem("abiertas")) || {};
+let nombre="";
+let abiertas=JSON.parse(localStorage.getItem("abiertas"))||{};
 
-let premios = [
-  "🍼 Kit bebé",
-  "🛁 Kit baño",
-  "👕 Ropa bebé",
-  "🧸 Juguetes",
-  "🛏️ Cobija",
-  "🧴 Aseo bebé",
-  "🧦 Medias",
-  "🎀 Set completo",
-  "🏆 Coche bebé",
-  "🏆 Cuna bebé"
+let premios=[
+"🍼 Kit pañales",
+"🛁 Kit baño",
+"👕 Ropa bebé",
+"🧸 Juguetes",
+"🛏️ Cobija",
+"🧴 Aseo bebé",
+"🎀 Set ropa",
+"🏆 Coche bebé",
+"🏆 Cuna bebé"
 ];
 
-function entrar() {
-  invitacion.style.display = "none";
-  juego.style.display = "block";
-  panel.style.display = "block"; // 👈 ACTIVA PANEL
-  cargarPanel();
+function entrar(){
+invitacion.style.display="none";
+juego.style.display="block";
+panel.style.display="block";
 }
 
-function iniciarJuego() {
-  const nombre = document.getElementById("nombre").value;
-
-  if (nombre.trim() === "") {
-    alert("Escribe tu nombre 💕");
-    return;
-  }
-
-  nombreJugador = nombre;
-  login.style.display = "none";
-
-  crearCajitas();
+function iniciarJuego(){
+nombre=document.getElementById("nombre").value;
+if(nombre==="") return alert("Escribe tu nombre");
+crear();
 }
 
-function crearCajitas() {
-  for (let i = 1; i <= 100; i++) {
-    const box = document.createElement("div");
-    box.classList.add("box");
+function crear(){
+for(let i=1;i<=100;i++){
+let box=document.createElement("div");
+box.classList.add("box");
 
-    if (abiertas[i]) {
-      box.innerText = "🎁";
-      box.style.background = "#ddd";
-      box.style.pointerEvents = "none";
-    } else {
-      box.innerText = "🎁";
-    }
-
-    box.addEventListener("click", () => {
-      if (abiertas[i]) return;
-
-      const premio = premios[Math.floor(Math.random() * premios.length)];
-
-      box.innerText = "✔";
-
-      document.getElementById("sonido").play();
-
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-
-      abiertas[i] = {
-        jugador: nombreJugador,
-        premio: premio
-      };
-
-      localStorage.setItem("abiertas", JSON.stringify(abiertas));
-
-      actualizarPanel();
-    });
-
-    grid.appendChild(box);
-  }
+if(abiertas[i]){
+box.innerText="🎁";
+box.style.background="#ddd";
+box.style.pointerEvents="none";
 }
 
-// 📊 PANEL
-function cargarPanel() {
-  actualizarPanel();
+box.onclick=()=>{
+
+if(abiertas[i])return;
+
+let premio=premios[Math.floor(Math.random()*premios.length)];
+
+box.innerText="✔";
+
+confetti({particleCount:80,spread:70,origin:{y:0.6}});
+document.getElementById("sonido").play();
+
+abiertas[i]={
+nombre,
+premio
+};
+
+localStorage.setItem("abiertas",JSON.stringify(abiertas));
+
+actualizar();
+};
+
+grid.appendChild(box);
+}
 }
 
-function actualizarPanel() {
-  registrosDiv.innerHTML = "";
-
-  Object.keys(abiertas).forEach((key) => {
-    const item = document.createElement("div");
-    item.classList.add("registro");
-    item.innerHTML = `
-      🎁 Caja ${key}<br>
-      👤 ${abiertas[key].jugador}<br>
-      🏆 ${abiertas[key].premio}
-    `;
-    registrosDiv.appendChild(item);
-  });
+function actualizar(){
+registros.innerHTML="";
+Object.keys(abiertas).forEach(k=>{
+let d=document.createElement("div");
+d.innerHTML=`🎁 Caja ${k}<br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
+registros.appendChild(d);
+});
 }
 
 </script>
