@@ -8,36 +8,22 @@
 
 <style>
 body {
-  margin: 0;
-  font-family: Arial;
-  background: #ffe6f0;
-  text-align: center;
+  margin:0;
+  font-family:Arial;
+  background:#ffe6f0;
+  text-align:center;
 }
 
 /* 🎀 INVITACIÓN */
 #invitacion {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  background: linear-gradient(#ffd6e8, #fff0f5);
-  position: relative;
-  overflow: hidden;
-}
-
-/* ☁️ nubes */
-.cloud {
-  position: absolute;
-  width: 120px;
-  opacity: 0.5;
-  animation: move 25s linear infinite;
-}
-
-@keyframes move {
-  from {transform: translateX(-200px);}
-  to {transform: translateX(120%);}
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(#ffd6e8,#fff0f5);
+  position:relative;
+  overflow:hidden;
 }
 
 h1 { color:#ff4d88; }
@@ -51,11 +37,24 @@ button {
   cursor:pointer;
 }
 
-/* 🧸 imagen bebé */
+/* 🧸 bebé */
 .bebe {
   width:180px;
   border-radius:20px;
   margin-bottom:10px;
+}
+
+/* ☁️ nubes */
+.cloud {
+  position:absolute;
+  width:120px;
+  opacity:0.5;
+  animation:move 25s linear infinite;
+}
+
+@keyframes move {
+  from {transform:translateX(-200px);}
+  to {transform:translateX(120%);}
 }
 
 /* 🎁 juego */
@@ -72,10 +71,17 @@ button {
 .box {
   background:white;
   border:2px solid #ff99bb;
-  padding:12px;
+  padding:10px;
   border-radius:8px;
   cursor:pointer;
-  font-size:12px;
+  font-size:11px;
+  transition:all 0.4s ease;
+}
+
+/* ✨ animación abrir */
+.box.opening {
+  transform:scale(1.2) rotate(5deg);
+  background:#ffb3d1;
 }
 
 /* 📊 panel */
@@ -83,7 +89,7 @@ button {
   position:fixed;
   right:10px;
   top:10px;
-  width:250px;
+  width:260px;
   background:white;
   border:2px solid #ff4d88;
   padding:10px;
@@ -98,21 +104,19 @@ button {
 <!-- 🎀 INVITACIÓN -->
 <div id="invitacion">
 
-  <!-- ☁️ nubes -->
-  <img class="cloud" style="top:20px; left:0;"
-  src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
+<img class="cloud" style="top:20px;left:0"
+src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 
-  <img class="cloud" style="top:120px; left:-100px; animation-delay:5s;"
-  src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
+<img class="cloud" style="top:120px;left:-80px;animation-delay:5s"
+src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 
-  <!-- 🧸 bebé con oso -->
-  <img class="bebe"
-  src="https://i.imgur.com/3ZQ3ZQb.png">
+<img class="bebe"
+src="https://i.imgur.com/3ZQ3ZQb.png">
 
-  <h1>🎀 Baby Shower de Naila 🎀</h1>
-  <p>Estás invitada a una experiencia mágica 💕</p>
+<h1>🎀 Baby Shower de Naila 🎀</h1>
+<p>Estás invitada a una experiencia mágica 💕</p>
 
-  <button onclick="entrar()">Entrar 💌</button>
+<button onclick="entrar()">Entrar 💌</button>
 </div>
 
 <!-- 🎁 JUEGO -->
@@ -127,7 +131,6 @@ button {
 </div>
 
 <div class="grid" id="grid"></div>
-
 </div>
 
 <!-- 📊 PANEL -->
@@ -153,13 +156,15 @@ let nombre="";
 let abiertas=JSON.parse(localStorage.getItem("abiertas"))||{};
 
 let premios=[
-"🍼 Kit pañales",
-"🛁 Kit baño",
+"🍼 Pañales + pañitos + tetero",
+"🛁 Kit baño bebé",
 "👕 Ropa bebé",
 "🧸 Juguetes",
 "🛏️ Cobija",
 "🧴 Aseo bebé",
 "🎀 Set ropa",
+"🧦 Medias + baberos",
+"👶 Kit recién nacido",
 "🏆 Coche bebé",
 "🏆 Cuna bebé"
 ];
@@ -173,30 +178,45 @@ panel.style.display="block";
 function iniciarJuego(){
 nombre=document.getElementById("nombre").value;
 if(nombre==="") return alert("Escribe tu nombre");
-crear();
+crearCajitas();
 }
 
-function crear(){
+function crearCajitas(){
 for(let i=1;i<=100;i++){
 let box=document.createElement("div");
 box.classList.add("box");
 
 if(abiertas[i]){
-box.innerText="🎁";
-box.style.background="#ddd";
+box.innerText=abiertas[i].premio;
+box.style.background="#ff4d88";
+box.style.color="white";
 box.style.pointerEvents="none";
 }
 
 box.onclick=()=>{
 
-if(abiertas[i])return;
+if(abiertas[i]) return;
 
-let premio=premios[Math.floor(Math.random()*premios.length)];
+/* ✨ ANIMACIÓN DE APERTURA */
+box.classList.add("opening");
 
-box.innerText="✔";
+setTimeout(()=>{
 
-confetti({particleCount:80,spread:70,origin:{y:0.6}});
+const premio=premios[Math.floor(Math.random()*premios.length)];
+
+box.innerText=premio;
+
+box.style.background="#ff4d88";
+box.style.color="white";
+box.style.pointerEvents="none";
+
 document.getElementById("sonido").play();
+
+confetti({
+particleCount:80,
+spread:70,
+origin:{y:0.6}
+});
 
 abiertas[i]={
 nombre,
@@ -205,18 +225,24 @@ premio
 
 localStorage.setItem("abiertas",JSON.stringify(abiertas));
 
-actualizar();
+actualizarPanel();
+
+box.classList.remove("opening");
+
+},800); // ⏱️ tiempo de apertura
+
 };
 
 grid.appendChild(box);
 }
 }
 
-function actualizar(){
+function actualizarPanel(){
 registros.innerHTML="";
 Object.keys(abiertas).forEach(k=>{
 let d=document.createElement("div");
-d.innerHTML=`🎁 Caja ${k}<br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
+d.innerHTML=
+`🎁 Caja ${k}<br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
 registros.appendChild(d);
 });
 }
