@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Baby Shower</title>
+    <!-- Incluimos Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        body {
+            background-color: #ffeef2;
+            font-family: 'Arial', sans-serif;
+            color: #d65a7f;
+            padding: 20px;
+            margin: 0;
+        }
+        .contenedor-admin {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(214, 90, 127, 0.15);
+            border: 3px solid #ffcad4;
+        }
+        h1 { text-align: center; font-size: 28px; margin-bottom: 20px; }
+        .contador {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #fff0f3;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            position: relative;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ffcad4;
+        }
+        th {
+            background-color: #d65a7f;
+            color: white;
+            font-weight: bold;
+        }
+        tr:hover { background-color: #fff5f7; }
+        .estado-libre { color: #2ecc71; font-weight: bold; }
+        .estado-tomada { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
 
+    <div class="contenedor-admin">
+        <h1>📊 Registro de Cajas Seleccionadas</h1>
+        <div class="contador" id="conteo-cajas">Cargando datos...</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Caja #</th>
+                    <th>Estado</th>
+                    <th>Invitado / Nombre</th>
+                    <th>Regalo Asignado</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-registro">
+                <!-- Los datos se cargan aquí automáticamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // LISTA DE COMBOS (Debe ser idéntica a la de tu index.html)
+        const LISTA_REGALOS = [
+            "Tina de baño con una toalla con capucha, juguetes de baño y un paquete de pañales",
+            "Kit de aseo y salud para bebé (shampoo, colonia, crema antipañalitis) con pañitos húmedos y pañales",
+            "Ropita de niña: Vestidos hermosos, camisas y faldas elegantes con pañitos húmedos y pañales",
+            "Ropita de niña: Pantalones cómodos, bodys coloridos, medias y lazos para el cabello con pañitos húmedos y pañales",
+            "Un coche para bebé con una cobija térmica suave y un paquete de pañales grande",
+            "Juguetes grandes (gimnasio de actividades o caminador) combinados con ropa para la bebé y pañales",
+            "Juguetes pequeños (sonajeros, mordedores, libros de tela), un tetero anti-cólicos, ropa para la bebé y pañales",
+            "Kit de cuna: Sábanas rosadas, un cojín de lactancia, mudas de ropa variadas y un paquete de pañales",
+            "Canguro portabebé ergonómico, un set de baberos impermeables, calcetines y pañales",
+            "Extractor de leche o esterilizador de teteros con un set de cepillos de limpieza, pañitos húmedos y pañales",
+            "Mochila pañalera moderna equipada con cambiador portátil, cremas protectoras, pañitos y pañales",
+            "Termómetro digital para bebé, cortaúñas especial, aspirador nasal, un set de bodys y pañales"
+        ];
+
+        // CONFIGURACIÓN DE TU FIREBASE (Pega aquí tus mismos datos del index.html)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY_AQUÍ",
+            authDomain: "baby-shower-de-naila-victoria.firebaseapp.com",
+            projectId: "baby-shower-de-naila-victoria",
+            storageBucket: "baby-shower-de-naila-victoria.appspot.com",
+            messagingSenderId: "66949995186",
+            appId: "TU_APP_ID_AQUÍ"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Escuchar la base de datos en tiempo real
+        db.collection("cajitas").orderBy("combo").onSnapshot((querySnapshot) => {
+            const tabla = document.getElementById('tabla-registro');
+            tabla.innerHTML = "";
+            
+            let tomadas = 0;
+
+            querySnapshot.forEach((doc) => {
+                const datos = doc.data();
+                const numero = datos.combo;
+                const estaTomada = datos.reservado;
+                const invitado = datos.invitado || "—";
+                const regalo = LISTA_REGALOS[(numero - 1) % LISTA_REGALOS.length];
+
+                if (estaTomada) tomadas++;
+
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td><b>${numero}</b></td>
+                    <td class="${estaTomada ? 'estado-tomada' : 'estado-libre'}">${estaTomada ? 'TOMADA 💕' : 'Disponible'}</td>
+                    <td>${invitado}</td>
+                    <td style="font-size: 13px; color: #555;">${regalo}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+
+            document.getElementById('conteo-cajas').innerText = `Cajas seleccionadas: ${tomadas} de 100`;
+        });
+    </script>
+</body>
+</html>
