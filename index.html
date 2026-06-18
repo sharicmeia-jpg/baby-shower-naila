@@ -34,14 +34,49 @@
             color: #aa4b6b;
             margin-bottom: 25px;
         }
-        /* Contenedor de las 100 cajas */
+        /* ESTILOS DE LA PORTADA DE BIENVENIDA */
+        .seccion-portada {
+            padding: 40px 10px;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid #ffcad4;
+            border-radius: 25px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        input[type="text"]:focus {
+            border-color: #d65a7f;
+        }
+        .btn-principal {
+            background: #d65a7f;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn-principal:hover {
+            background: #b54668;
+        }
+
+        /* TABLERO DE LAS 100 CAJAS */
         .grid-cajas {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
             gap: 12px;
             justify-items: center;
         }
-        /* ESTILO DE LA CAJA ROSA (Como image_9c556e.png) */
+        /* DISEÑO DE LA CAJA ROSA (Como image_9c556e.png) */
         .caja-btn {
             background: none;
             border: none;
@@ -60,7 +95,7 @@
             height: 100%;
             object-fit: contain;
         }
-        /* NÚMERO ROSA EXACTAMENTE DENTRO DEL CORAZÓN */
+        /* NÚMERO ROSA DENTRO DEL CORAZÓN */
         .caja-numero {
             position: absolute;
             bottom: 22px; 
@@ -68,10 +103,9 @@
             transform: translateX(-50%);
             font-size: 16px;
             font-weight: bold;
-            color: #e57399; /* Color Rosa Fuerte */
-            text-shadow: 1px 1px 0px #fff; /* Sombra blanca para que resalte */
+            color: #e57399;
+            text-shadow: 1px 1px 0px #fff;
         }
-        /* Cajas ya reservadas */
         .tomada {
             filter: grayscale(1) opacity(0.4);
             cursor: not-allowed;
@@ -88,7 +122,8 @@
             border-radius: 8px;
             white-space: nowrap;
         }
-        /* PANTALLA DE REVELACIÓN (Cuando desaparecen las otras 99) */
+
+        /* PANTALLA GANADOR (UNA SOLA CAJA) */
         .pantalla-ganador {
             display: none;
             animation: suaveEntrada 0.5s ease-out forwards;
@@ -112,7 +147,6 @@
             max-width: 450px;
             margin: 20px auto;
         }
-        /* Animaciones */
         @keyframes suaveEntrada {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -128,17 +162,26 @@
 
     <div class="contenedor">
         
-        <!-- SECCIÓN DEL TABLERO (Se borra al hacer clic) -->
-        <div id="seccion-tablero">
-            <h1>✨ ¡Elige una Cajita para Naila ! ✨</h1>
+        <!-- PASO 1: PORTADA DE REGISTRO ORIGINAL -->
+        <div id="seccion-portada" class="seccion-portada">
+            <h1 style="font-size: 32px; margin-bottom: 10px;">Baby Shower de Naila 🎀</h1>
+            <h2>Escribe tu nombre completo para ingresar a la dinámica:</h2>
+            <input type="text" id="nombreInvitado" placeholder="Tu Nombre y Apellido">
+            <br>
+            <button class="btn-principal" onclick="entrarAlTablero()">Entrar a Jugar</button>
+        </div>
+
+        <!-- PASO 2: EL TABLERO DE LAS 100 CAJAS (Oculto al inicio) -->
+        <div id="seccion-tablero" style="display: none;">
+            <h1>✨ ¡Elige una Cajita para Naila! ✨</h1>
             <h2>Selecciona la caja que más te guste para descubrir tu regalo:</h2>
             <div class="grid-cajas" id="bloque-cajas"></div>
         </div>
 
-        <!-- SECCIÓN DE TU CAJA SOLA (Aparece al hacer clic) -->
+        <!-- PASO 3: SECCIÓN DE TU CAJA SOLA (Aparece al hacer clic) -->
         <div id="seccion-ganador" class="pantalla-ganador">
             <h1 style="font-size: 36px; margin-bottom: 10px;">¡Felicidades! 🎉</h1>
-            <h2 style="font-size: 18px;">Has abierto con éxito tu cajita seleccionada:</h2>
+            <h2 style="font-size: 18px;" id="mensaje-personalizado"></h2>
             
             <!-- Aquí se dibuja tu caja sola -->
             <div id="espacio-caja-sola"></div>
@@ -152,7 +195,7 @@
     </div>
 
     <script>
-        // CAMBIA ESTO por el nombre exacto de tu imagen en GitHub (ej: "cajita.png" o "image_9c556e.png")
+        // CAMBIA ESTO por el nombre exacto de tu imagen rosa en GitHub (ej: "image_9c556e.png")
         const NOMBRE_IMAGEN_ROSA = "image_9c556e.png"; 
 
         // CONFIGURACIÓN DE TU FIREBASE (Mantén tus datos reales aquí)
@@ -168,12 +211,42 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Cargar las 100 cajas desde Firebase
+        let nombreGlobal = "";
+
+        // Función de la Portada: Valida el nombre y da paso al juego
+        async function entrarAlTablero() {
+            const inputNombre = document.getElementById('nombreInvitado').value.trim();
+            if (inputNombre === "") {
+                alert("Por favor, ingresa tu nombre completo para continuar.");
+                return;
+            }
+            nombreGlobal = inputNombre;
+
+            try {
+                // Verificar si esta persona ya había elegido caja antes para no dejarla repetir
+                const yaJugo = await db.collection("cajitas").where("invitado", "==", nombreGlobal).get();
+                if (!yaJugo.empty) {
+                    const datosPasados = yaJugo.docs[0].data();
+                    mostrarPantallaFinal(datosPasados.combo, datosPasados.regalo);
+                    return;
+                }
+
+                // Si es nuevo, ocultamos la portada y cargamos las 100 cajas
+                document.getElementById('seccion-portada').style.display = 'none';
+                document.getElementById('seccion-tablero').style.display = 'block';
+                cargarTablero();
+
+            } catch (error) {
+                console.error("Error: ", error);
+                alert("Problema de conexión con Firebase.");
+            }
+        }
+
+        // Carga el tablero de 100 cajas
         function cargarTablero() {
             const contenedorCajas = document.getElementById('bloque-cajas');
             contenedorCajas.innerHTML = "";
 
-            // Traemos las 100 cajas ordenadas de Firebase
             db.collection("cajitas").orderBy("combo").get().then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     const datos = doc.data();
@@ -184,7 +257,6 @@
                     boton.className = `caja-btn ${estaTomada ? 'tomada' : ''}`;
                     boton.disabled = estaTomada;
 
-                    // Estructura idéntica a la foto: Imagen rosa + número rosa en el corazón
                     boton.innerHTML = `
                         <img src="${NOMBRE_IMAGEN_ROSA}" class="caja-img" alt="Caja ${numero}">
                         <div class="caja-numero">${numero}</div>
@@ -200,43 +272,39 @@
             });
         }
 
-        // Esta función hace la magia que me pediste
+        // Procesa la caja elegida y borra las otras 99
         function procesarEleccion(docId, numero, regalo) {
-            // Pedimos el nombre del invitado
-            let nombreInvitado = prompt("Por favor, escribe tu Nombre y Apellido para apartar la caja:");
-            if (!nombreInvitado || nombreInvitado.trim() === "") {
-                alert("Debes poner tu nombre para abrir la cajita.");
-                return;
-            }
-            nombreInvitado = nombreInvitado.trim();
-
-            // Guardamos en Firebase que esa caja ya es de él
             db.collection("cajitas").doc(docId).update({
-                invitado: nombreInvitado,
+                invitado: nombreGlobal,
                 reservado: true
             }).then(() => {
-                
-                // ¡AQUÍ SE BORRAN LAS OTRAS 99 CAJAS!
-                document.getElementById('seccion-tablero').style.display = 'none';
-
-                // Dibujamos únicamente SU caja elegida en grande
-                document.getElementById('espacio-caja-sola').innerHTML = `
-                    <div class="caja-ganadora-animada">
-                        <img src="${NOMBRE_IMAGEN_ROSA}" style="width:100%; height:100%; object-fit:contain;">
-                        <div class="caja-numero" style="font-size:32px; bottom:40px;">${numero}</div>
-                    </div>
-                `;
-
-                // Ponemos el texto del regalo asignado
-                document.getElementById('texto-regalo-final').innerText = `🎁 Caja #${numero}: ${regalo}`;
-
-                // Mostramos la pantalla limpia del ganador
-                document.getElementById('seccion-ganador').style.display = 'block';
+                mostrarPantallaFinal(numero, regalo);
             });
         }
 
-        // Arranca el juego cargando las cajas
-        cargarTablero();
+        // Muestra de forma limpia una sola caja
+        function mostrarPantallaFinal(numero, regalo) {
+            // Ocultamos tanto portada como el tablero de 100
+            document.getElementById('seccion-portada').style.display = 'none';
+            document.getElementById('seccion-tablero').style.display = 'none';
+
+            // Ponemos el mensaje personalizado
+            document.getElementById('mensaje-personalizado').innerText = `${nombreGlobal}, has abierto con éxito tu cajita seleccionada:`;
+
+            // Dibujamos únicamente SU caja elegida en grande
+            document.getElementById('espacio-caja-sola').innerHTML = `
+                <div class="caja-ganadora-animada">
+                    <img src="${NOMBRE_IMAGEN_ROSA}" style="width:100%; height:100%; object-fit:contain;">
+                    <div class="caja-numero" style="font-size:32px; bottom:40px;">${numero}</div>
+                </div>
+            `;
+
+            // Mostramos el regalo asignado
+            document.getElementById('texto-regalo-final').innerText = `🎁 Caja #${numero}: ${regalo}`;
+
+            // Mostramos la pantalla limpia del ganador
+            document.getElementById('seccion-ganador').style.display = 'block';
+        }
     </script>
 </body>
 </html>
