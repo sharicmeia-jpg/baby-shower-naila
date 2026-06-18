@@ -3,319 +3,357 @@
 
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Baby Shower Naila 💕</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
 body {
-  margin:0;
-  font-family:Arial;
-  background:#ffe6f0;
-  text-align:center;
-  position:relative;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #ffe6f0;
+  text-align: center;
+  min-height: 100vh;
 }
 
-/* 🎀 INVITACIÓN */
-#invitacion{
-    min-height:100vh;
-    display:flex;
-    flex-direction:row;
-    justify-content:space-evenly;
-    align-items:center;
-    gap:100px;
-    flex-wrap:wrap;
-    background:linear-gradient(#ffd6e8,#fff0f5);
-    padding:40px;
-    box-sizing:border-box;
-    overflow:hidden;
-}
-.bebe{
-    width:500px;
-    max-width:90%;
-    height:auto;
-    display:block;
-    border-radius:30px;
-    box-shadow:0 15px 30px rgba(0,0,0,.2);
+/* 🎀 CONTENEDOR PRINCIPAL GLOBAL (Divide Bebé y Juego) */
+.contenedor-principal {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(#ffd6e8, #fff0f5);
 }
 
-h1 {
-color:#ff4d88;
+/* 🧸 SECCIÓN IZQUIERDA: BEBÉ FIJA */
+.seccion-bebe {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 2;
 }
+
+.bebe {
+  width: 450px;
+  max-width: 90%;
+  height: auto;
+  border-radius: 30px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, .15);
+}
+
+/* 🕹️ SECCIÓN DERECHA: INTERFAZ DINÁMICA */
+.seccion-interfaz {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  z-index: 2;
+}
+
+h1 { color: #ff4d88; font-size: 42px; margin-bottom: 5px; }
+h2 { color: #ff7aa2; font-size: 26px; margin-top: 0; }
+p { font-size: 18px; color: #666; }
 
 button {
-background:#ff4d88;
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:15px;
-cursor:pointer;
+  background: #ff4d88;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background 0.2s;
 }
-/* 🧸 bebé */
-.contenido{
-    max-width:500px;
-    text-align:left;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
+button:hover { background: #e03973; }
+
+/* 📧 PANTALLAS */
+#invitacion { display: flex; flex-direction: column; align-items: center; }
+#juego { display: none; width: 100%; }
+
+/* 🎁 ICONO CAJA SORPRESA INICIAL */
+.caja-sorpresa-icono {
+  font-size: 80px;
+  margin: 20px 0;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
 }
 
-.contenido h1{
-  font-size:50px;
-  color:#ff4d88;
+/* 🔒 PANTALLA LOGIN INTERNO */
+#login { margin-top: 20px; }
+#nombre {
+  padding: 12px;
+  border: 2px solid #ff4d88;
+  border-radius: 10px;
+  font-size: 16px;
+  text-align: center;
+  outline: none;
 }
 
-.contenido p{
-  font-size:22px;
-  color:#666;
-  margin:20px 0;
-  line-height:1.5;
+/* 🎛️ CONTENEDOR DE LAS 100 CAJAS (Con Scroll Eficiente) */
+.contenedor-grid {
+  max-height: 55vh; /* Evita que ocupe toda la pantalla */
+  overflow-y: auto; /* Activa el scroll vertical */
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 15px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+  margin-top: 15px;
 }
-
-.contenido button{
-  padding:15px 30px;
-  font-size:20px;
-}
-.contenido h2{
-  font-size:30px;
-  color:#ff7aa2;
-  margin:10px 0 20px 0;
-}
-/* ☁️ nubes */
-.cloud {
-  position:absolute;
-  width:120px;
-  opacity:0.5;
-  animation:move 25s linear infinite;
-}
-
-@keyframes move {
-  from {transform:translateX(-200px);}
-  to {transform:translateX(120%);}
-}
-
-/* 🎁 juego */
-#juego { display:none; padding:20px; }
 
 .grid {
-  display:grid;
-  grid-template-columns:repeat(10,1fr);
-  gap:8px;
-  max-width:600px;
-  margin:auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 10px;
+  max-width: 550px;
+  margin: auto;
 }
 
 .box {
-  background:#ffd6e8;
-  border:2px solid #ff4d88;
-  padding:10px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:11px;
-  transition:all 0.3s ease;
-  box-shadow:0 3px 8px rgba(255,77,136,0.3);
+  background: #ffd6e8;
+  border: 2px solid #ff4d88;
+  padding: 15px 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  color: #ff4d88;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(255, 77, 136, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 50px;
 }
-
-.box:hover{
-  transform:scale(1.05);
-  background:#ffb3d1;
+.box:hover {
+  transform: scale(1.05);
+  background: #ffb3d1;
+}
+.box.opened {
+  background: #ff4d88 !important;
+  color: white !important;
+  pointer-events: none;
+  font-size: 11px;
 }
 .box.opening {
-  transform:scale(1.2);
-  background:#ff4d88;
-  color:white;
+  transform: scale(1.2);
+  background: #ff4d88;
+  color: white;
 }
 
-/* 📊 panel */
+/* ☁️ NUBES DE FONDO */
+.cloud {
+  position: absolute;
+  width: 120px;
+  opacity: 0.3;
+  animation: move 25s linear infinite;
+  z-index: 1;
+}
+@keyframes move {
+  from { transform: translateX(-200px); }
+  to { transform: translateX(100vw); }
+}
+
+/* 📊 PANEL DE REGISTROS (Oculto para invitados) */
 #panel {
-  position:fixed;
-  right:10px;
-  top:10px;
-  width:260px;
-  background:white;
-  border:2px solid #ff4d88;
-  padding:10px;
-  font-size:12px;
-  display:none;
+  position: fixed;
+  right: 15px;
+  top: 15px;
+  width: 260px;
+  background: white;
+  border: 2px solid #ff4d88;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 13px;
+  display: none; /* Se activa dinámicamente con ?admin=true */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 10;
+}
+#registros div {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ffd6e8;
 }
 
-/* 📱 Diseño para celular */
+/* 📱 ADAPTACIÓN PARA CELULARES */
 @media(max-width:900px){
-
-  #invitacion{
-    flex-direction:column;
-    gap:30px;
-    text-align:center;
-  }
-
-  .contenido{
-    text-align:center;
-  }
-
-  .contenido h1{
-    font-size:38px;
-  }
-
-  .contenido p{
-    font-size:20px;
-  }
-
-  .bebe{
-    width:320px;
-    max-width:90%;
-  }
-
+  .contenedor-principal { flex-direction: column; }
+  .seccion-bebe { flex: none; padding-top: 30px; }
+  .bebe { width: 250px; }
+  .seccion-interfaz { padding: 20px; flex: none; }
+  h1 { font-size: 32px; }
+  h2 { font-size: 20px; }
+  .contenedor-grid { max-height: 40vh; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🎀 INVITACIÓN -->
-<div id="invitacion">
+<div class="contenedor-principal">
+  <img class="cloud" style="top:20px; left:0;" src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
+  <img class="cloud" style="top:150px; left:-80px; animation-delay:5s;" src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 
-<!-- ☁️ nubes -->
-<img class="cloud" style="top:20px;left:0"
-src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
-
-<img class="cloud" style="top:120px;left:-80px;animation-delay:5s"
-src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
-
-<!-- 🧸 BEBÉ -->
-
-  <img class="bebe" src="img/bebe.png">
-
-  <div class="contenido">
-    <h1>🎀 Naila Victoria 🎀</h1>
-    <h2>Te doy la bienvenida a mi Baby Shower 💕</h2>
-    <p>Estás invitado/@ a una experiencia mágica ✨</p>
-    <button onclick="entrar()">Entrar 💌</button>
+  <div class="seccion-bebe">
+    <img class="bebe" src="img/bebe.png" alt="Bebé Naila">
   </div>
 
+  <div class="seccion-interfaz">
+    
+    <div id="invitacion">
+      <h1>🎀 Naila Victoria 🎀</h1>
+      <h2>Te doy la bienvenida a mi Baby Shower 💕</h2>
+      <p>Estás invitado/@ a una experiencia mágica ✨</p>
+      <button onclick="entrar()">Entrar 💌</button>
+    </div>
+
+    <div id="juego">
+      <h1>🎀 Naila Victoria 🎀</h1>
+      
+      <div id="login">
+        <p>Introduce tu nombre para empezar a jugar 👇</p>
+        <div class="caja-sorpresa-icono">🎁</div>
+        <input id="nombre" placeholder="Tu nombre completo" autocomplete="off">
+        <br><br>
+        <button onclick="iniciarJuego()">Entrar al Sorteo 🎁</button>
+      </div>
+
+      <div id="contenedor-tablero" style="display: none;">
+        <p>¡Elige una sola cajita sorpresa! 🎁</p>
+        <div class="contenedor-grid">
+          <div class="grid" id="grid"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </div>
 
-<!-- 🎁 JUEGO -->
-<div id="juego">
-
-<h1>🎀 Naila Victoria 🎀</h1>
-<p>Escoge una cajita sorpresa 🎁</p>
-
-<div id="login">
-<input id="nombre" placeholder="Tu nombre">
-<br><br>
-<button onclick="iniciarJuego()">Entrar 🎁</button>
-</div>
-
-<div class="grid" id="grid"></div>
-</div>
-
-<!-- 📊 PANEL -->
 <div id="panel">
-<h3>📊 Registro</h3>
-<div id="registros"></div>
+  <h3 style="color:#ff4d88; margin-top:0;">📊 Registro de Premios</h3>
+  <div id="registros"></div>
 </div>
 
-<!-- 🔊 SONIDO -->
 <audio id="sonido">
-<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a4b1b1.mp3">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a4b1b1.mp3">
 </audio>
 
 <script>
+const invitacion = document.getElementById("invitacion");
+const juego = document.getElementById("juego");
+const loginSection = document.getElementById("login");
+const tableroSection = document.getElementById("contenedor-tablero");
+const grid = document.getElementById("grid");
+const panel = document.getElementById("panel");
+const registros = document.getElementById("registros");
 
-const invitacion=document.getElementById("invitacion");
-const juego=document.getElementById("juego");
-const grid=document.getElementById("grid");
-const panel=document.getElementById("panel");
-const registros=document.getElementById("registros");
+let nombre = "";
+let abiertas = JSON.parse(localStorage.getItem("abiertas")) || {};
 
-let nombre="";
-let abiertas=JSON.parse(localStorage.getItem("abiertas"))||{};
+// Verificar si eres el administrador mediante la URL (?admin=true)
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('admin') === 'true') {
+  panel.style.display = "block";
+}
 
-let premios=[
-"🍼 Pañales + pañitos + tetero",
-"🛁 Kit baño bebé",
-"👕 Ropa bebé",
-"🧸 Juguetes",
-"🛏️ Cobija suave",
-"🧴 Aseo bebé",
-"🎀 Set ropa",
-"🧦 Medias + baberos",
-"👶 Kit recién nacido",
-"🏆 Coche bebé",
-"🏆 Cuna bebé"
+let premios = [
+  "🍼 Pañales + pañitos + tetero",
+  "🛁 Kit baño bebé",
+  "👕 Ropa bebé",
+  "🧸 Juguetes",
+  "🛏️ Cobija suave",
+  "🧴 Aseo bebé",
+  "🎀 Set ropa",
+  "🧦 Medias + baberos",
+  "👶 Kit recién nacido",
+  "🏆 Coche bebé",
+  "🏆 Cuna bebé"
 ];
 
-function entrar(){
-invitacion.style.display="none";
-juego.style.display="block";
-panel.style.display="block";
+function entrar() {
+  invitacion.style.display = "none";
+  juego.style.display = "block";
+  actualizarPanel(); // Carga registros previos si eres admin
 }
 
-function iniciarJuego(){
-nombre=document.getElementById("nombre").value;
-if(nombre==="") return alert("Escribe tu nombre");
-crearCajitas();
+function iniciarJuego() {
+  nombre = document.getElementById("nombre").value.trim();
+  if (nombre === "") return alert("Por favor, escribe tu nombre para continuar.");
+  
+  loginSection.style.display = "none";
+  tableroSection.style.display = "block";
+  crearCajitas();
 }
 
-function crearCajitas(){
-for(let i=1;i<=100;i++){
-let box=document.createElement("div");
-box.classList.add("box");
+function crearCajitas() {
+  grid.innerHTML = ""; // Limpiar por seguridad
+  
+  for (let i = 1; i <= 100; i++) {
+    let box = document.createElement("div");
+    box.classList.add("box");
 
-if(abiertas[i]){
-box.innerText=abiertas[i].premio;
-box.style.background="#ff4d88";
-box.style.color="white";
-box.style.pointerEvents="none";
+    // Si la caja ya fue abierta anteriormente, muestra el premio directamente bloqueada
+    if (abiertas[i]) {
+      box.innerText = abiertas[i].premio;
+      box.classList.add("opened");
+    } else {
+      // Si está cerrada, muestra inicialmente el ícono del regalo y el número
+      box.innerText = `🎁 ${i}`;
+    }
+
+    box.onclick = () => {
+      if (abiertas[i]) return;
+
+      box.classList.add("opening");
+
+      setTimeout(() => {
+        const premio = premios[Math.floor(Math.random() * premios.length)];
+
+        box.innerText = premio;
+        box.classList.remove("opening");
+        box.classList.add("opened");
+
+        document.getElementById("sonido").play().catch(()=>{});
+
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+
+        abiertas[i] = { nombre, premio };
+        localStorage.setItem("abiertas", JSON.stringify(abiertas));
+
+        actualizarPanel();
+      }, 700);
+    };
+
+    grid.appendChild(box);
+  }
 }
 
-box.onclick=()=>{
-
-if(abiertas[i]) return;
-
-box.classList.add("opening");
-
-setTimeout(()=>{
-
-const premio=premios[Math.floor(Math.random()*premios.length)];
-
-box.innerText=premio;
-box.style.background="#ff4d88";
-box.style.color="white";
-box.style.pointerEvents="none";
-
-document.getElementById("sonido").play();
-
-confetti({
-particleCount:80,
-spread:70,
-origin:{y:0.6}
-});
-
-abiertas[i]={nombre,premio};
-
-localStorage.setItem("abiertas",JSON.stringify(abiertas));
-
-actualizarPanel();
-
-box.classList.remove("opening");
-
-},700);
-};
-
-grid.appendChild(box);
+function actualizarPanel() {
+  registros.innerHTML = "";
+  Object.keys(abiertas).forEach(k => {
+    let d = document.createElement("div");
+    d.innerHTML = `<strong>Caja ${k}</strong><br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
+    registros.appendChild(d);
+  });
 }
-}
-
-function actualizarPanel(){
-registros.innerHTML="";
-Object.keys(abiertas).forEach(k=>{
-let d=document.createElement("div");
-d.innerHTML=`🎁 Caja ${k}<br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
-registros.appendChild(d);
-});
-}
-
 </script>
 
 </body>
