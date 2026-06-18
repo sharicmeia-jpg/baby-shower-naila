@@ -34,11 +34,17 @@
             color: #aa4b6b;
             margin-bottom: 25px;
         }
-        /* ESTILOS DE LA PORTADA DE BIENVENIDA */
+        /* ESTILOS DE LA PORTADA DE BIENVENIDA ORIGINAL */
         .seccion-portada {
-            padding: 40px 10px;
+            padding: 20px 10px;
             max-width: 450px;
             margin: 0 auto;
+        }
+        .img-bebe-portada {
+            width: 100%;
+            max-width: 280px;
+            margin-bottom: 15px;
+            border-radius: 15px;
         }
         input[type="text"] {
             width: 80%;
@@ -76,7 +82,7 @@
             gap: 12px;
             justify-items: center;
         }
-        /* DISEÑO DE LA CAJA ROSA (Como image_9c556e.png) */
+        /* DISEÑO DE LA CAJA ROSA */
         .caja-btn {
             background: none;
             border: none;
@@ -137,15 +143,16 @@
             animation: abrirCajaEfecto 0.6s ease-in-out;
         }
         .regalo-bloque {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #222;
             background: #fff0f3;
             padding: 20px;
             border-radius: 15px;
             border: 3px dashed #d65a7f;
-            max-width: 450px;
+            max-width: 500px;
             margin: 20px auto;
+            line-height: 1.4;
         }
         @keyframes suaveEntrada {
             from { opacity: 0; transform: translateY(20px); }
@@ -162,8 +169,9 @@
 
     <div class="contenedor">
         
-        <!-- PASO 1: PORTADA DE REGISTRO ORIGINAL -->
+        <!-- PASO 1: PORTADA DE REGISTRO ORIGINAL CON LA IMAGEN DE LA BEBÉ -->
         <div id="seccion-portada" class="seccion-portada">
+            <img src="img/bebe.png" alt="Bebé Naila " class="img-bebe-portada">
             <h1 style="font-size: 32px; margin-bottom: 10px;">Baby Shower de Naila 🎀</h1>
             <h2>Escribe tu nombre completo para ingresar a la dinámica:</h2>
             <input type="text" id="nombreInvitado" placeholder="Tu Nombre y Apellido">
@@ -171,14 +179,14 @@
             <button class="btn-principal" onclick="entrarAlTablero()">Entrar a Jugar</button>
         </div>
 
-        <!-- PASO 2: EL TABLERO DE LAS 100 CAJAS (Oculto al inicio) -->
+        <!-- PASO 2: EL TABLERO DE LAS 100 CAJAS -->
         <div id="seccion-tablero" style="display: none;">
             <h1>✨ ¡Elige una Cajita para Naila! ✨</h1>
             <h2>Selecciona la caja que más te guste para descubrir tu regalo:</h2>
             <div class="grid-cajas" id="bloque-cajas"></div>
         </div>
 
-        <!-- PASO 3: SECCIÓN DE TU CAJA SOLA (Aparece al hacer clic) -->
+        <!-- PASO 3: SECCIÓN DE TU CAJA SOLA -->
         <div id="seccion-ganador" class="pantalla-ganador">
             <h1 style="font-size: 36px; margin-bottom: 10px;">¡Felicidades! 🎉</h1>
             <h2 style="font-size: 18px;" id="mensaje-personalizado"></h2>
@@ -195,10 +203,26 @@
     </div>
 
     <script>
-        // CAMBIA ESTO por el nombre exacto de tu imagen rosa en GitHub (ej: "image_9c556e.png")
-        const NOMBRE_IMAGEN_ROSA = "image_9c556e.png"; 
+        // RUTA DE TU IMAGEN ROSA ACTUALIZADA EN TU CARPETA IMG
+        const NOMBRE_IMAGEN_ROSA = "img/cajita.jpeg"; 
 
-        // CONFIGURACIÓN DE TU FIREBASE (Mantén tus datos reales aquí)
+        // LISTA DE COMBOS COMPLETOS, DETALLADOS Y ROBUSTOS
+        const LISTA_REGALOS = [
+            "Tina de baño con una toalla con capucha, juguetes de baño y un paquete de pañales",
+            "Kit de aseo y salud para bebé (shampoo, colonia, crema antipañalitis) con pañitos húmedos y pañales",
+            "Ropita de niña: Vestidos hermosos, camisas y faldas elegantes con pañitos húmedos y pañales",
+            "Ropita de niña: Pantalones cómodos, bodys coloridos, medias y lazos para el cabello con pañitos húmedos y pañales",
+            "Un coche para bebé con una cobija térmica suave y un paquete de pañales grande",
+            "Juguetes grandes (gimnasio de actividades o caminador) combinados con ropa para la bebé y pañales",
+            "Juguetes pequeños (sonajeros, mordedores, libros de tela), un tetero anti-cólicos, ropa para la bebé y pañales",
+            "Kit de cuna: Sábanas rosadas, un cojín de lactancia, mudas de ropa variadas y un paquete de pañales",
+            "Canguro portabebé ergonómico, un set de baberos impermeables, calcetines y pañales",
+            "Extractor de leche o esterilizador de teteros con un set de cepillos de limpieza, pañitos húmedos y pañales",
+            "Mochila pañalera moderna equipada con cambiador portátil, cremas protectoras, pañitos y pañales",
+            "Termómetro digital para bebé, cortaúñas especial, aspirador nasal, un set de bodys y pañales"
+        ];
+
+        // CONFIGURACIÓN DE TU FIREBASE
         const firebaseConfig = {
             apiKey: "TU_API_KEY_AQUÍ",
             authDomain: "baby-shower-de-naila-victoria.firebaseapp.com",
@@ -213,7 +237,6 @@
 
         let nombreGlobal = "";
 
-        // Función de la Portada: Valida el nombre y da paso al juego
         async function entrarAlTablero() {
             const inputNombre = document.getElementById('nombreInvitado').value.trim();
             if (inputNombre === "") {
@@ -223,15 +246,14 @@
             nombreGlobal = inputNombre;
 
             try {
-                // Verificar si esta persona ya había elegido caja antes para no dejarla repetir
                 const yaJugo = await db.collection("cajitas").where("invitado", "==", nombreGlobal).get();
                 if (!yaJugo.empty) {
                     const datosPasados = yaJugo.docs[0].data();
-                    mostrarPantallaFinal(datosPasados.combo, datosPasados.regalo);
+                    const regaloTexto = LISTA_REGALOS[(datosPasados.combo - 1) % LISTA_REGALOS.length];
+                    mostrarPantallaFinal(datosPasados.combo, regaloTexto);
                     return;
                 }
 
-                // Si es nuevo, ocultamos la portada y cargamos las 100 cajas
                 document.getElementById('seccion-portada').style.display = 'none';
                 document.getElementById('seccion-tablero').style.display = 'block';
                 cargarTablero();
@@ -242,7 +264,6 @@
             }
         }
 
-        // Carga el tablero de 100 cajas
         function cargarTablero() {
             const contenedorCajas = document.getElementById('bloque-cajas');
             contenedorCajas.innerHTML = "";
@@ -252,6 +273,8 @@
                     const datos = doc.data();
                     const numero = datos.combo;
                     const estaTomada = datos.reservado;
+
+                    const regaloAsignado = LISTA_REGALOS[(numero - 1) % LISTA_REGALOS.length];
 
                     const boton = document.createElement('button');
                     boton.className = `caja-btn ${estaTomada ? 'tomada' : ''}`;
@@ -264,7 +287,7 @@
                     `;
 
                     if (!estaTomada) {
-                        boton.onclick = () => procesarEleccion(doc.id, numero, datos.regalo);
+                        boton.onclick = () => procesarEleccion(doc.id, numero, regaloAsignado);
                     }
 
                     contenedorCajas.appendChild(boton);
@@ -272,7 +295,6 @@
             });
         }
 
-        // Procesa la caja elegida y borra las otras 99
         function procesarEleccion(docId, numero, regalo) {
             db.collection("cajitas").doc(docId).update({
                 invitado: nombreGlobal,
@@ -282,16 +304,12 @@
             });
         }
 
-        // Muestra de forma limpia una sola caja
         function mostrarPantallaFinal(numero, regalo) {
-            // Ocultamos tanto portada como el tablero de 100
             document.getElementById('seccion-portada').style.display = 'none';
             document.getElementById('seccion-tablero').style.display = 'none';
 
-            // Ponemos el mensaje personalizado
             document.getElementById('mensaje-personalizado').innerText = `${nombreGlobal}, has abierto con éxito tu cajita seleccionada:`;
 
-            // Dibujamos únicamente SU caja elegida en grande
             document.getElementById('espacio-caja-sola').innerHTML = `
                 <div class="caja-ganadora-animada">
                     <img src="${NOMBRE_IMAGEN_ROSA}" style="width:100%; height:100%; object-fit:contain;">
@@ -299,10 +317,8 @@
                 </div>
             `;
 
-            // Mostramos el regalo asignado
             document.getElementById('texto-regalo-final').innerText = `🎁 Caja #${numero}: ${regalo}`;
 
-            // Mostramos la pantalla limpia del ganador
             document.getElementById('seccion-ganador').style.display = 'block';
         }
     </script>
