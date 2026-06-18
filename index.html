@@ -305,14 +305,21 @@ function cargarTablero() {
     });
 }
 
-        function procesarEleccion(docId, numero, regalo) {
-            db.collection("cajitas").doc(docId).update({
-                invitado: nombreGlobal,
-                reservado: true
-            }).then(() => {
-                mostrarPantallaFinal(numero, regalo);
-            });
-        }
+function procesarEleccion(docId, numero, regalo) {
+    // Nos aseguramos de que guarde la caja con el nombre correcto en Firebase
+    db.collection("cajitas").doc(docId).set({
+        combo: numero,
+        invitado: nombreGlobal,
+        reservado: true
+    }, { merge: true }).then(() => {
+        // En cuanto se guarda, activa la magia de abrir la caja sola
+        mostrarPantallaFinal(numero, regalo);
+    }).catch((error) => {
+        console.error("Error al guardar: ", error);
+        // Si hay algún problema con Firebase, de todos modos le abrimos la caja para que no se trabe
+        mostrarPantallaFinal(numero, regalo);
+    });
+}
 
         function mostrarPantallaFinal(numero, regalo) {
             document.getElementById('seccion-portada').style.display = 'none';
