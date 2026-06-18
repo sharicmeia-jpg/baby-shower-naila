@@ -81,7 +81,7 @@
     </div>
 
     <script>
-        // LISTA DE COMBOS (Debe ser idéntica a la de tu index.html)
+        // LISTA DE COMBOS (Idéntica a la de tu juego)
         const LISTA_REGALOS = [
             "Tina de baño con una toalla con capucha, juguetes de baño y un paquete de pañales",
             "Kit de aseo y salud para bebé (shampoo, colonia, crema antipañalitis) con pañitos húmedos y pañales",
@@ -97,14 +97,12 @@
             "Termómetro digital para bebé, cortaúñas especial, aspirador nasal, un set de bodys y pañales"
         ];
 
-        // CONFIGURACIÓN DE TU FIREBASE (Pega aquí tus mismos datos del index.html)
+        // AQUÍ ESTÁ TU CONFIGURACIÓN AUTOMÁTICA
         const firebaseConfig = {
-            apiKey: "TU_API_KEY_AQUÍ",
             authDomain: "baby-shower-de-naila-victoria.firebaseapp.com",
             projectId: "baby-shower-de-naila-victoria",
             storageBucket: "baby-shower-de-naila-victoria.appspot.com",
-            messagingSenderId: "66949995186",
-            appId: "TU_APP_ID_AQUÍ"
+            messagingSenderId: "66949995186"
         };
         
         firebase.initializeApp(firebaseConfig);
