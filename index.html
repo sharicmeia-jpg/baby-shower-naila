@@ -6,7 +6,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Baby Shower Naila 💕</title>
 
+<!-- Confeti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<!-- Firebase SDKs necesarios para Tiempo Real -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <style>
 body {
@@ -17,7 +22,6 @@ body {
   min-height: 100vh;
 }
 
-/* 🎀 CONTENEDOR PRINCIPAL GLOBAL (Divide Bebé y Juego) */
 .contenedor-principal {
   display: flex;
   flex-direction: row;
@@ -27,7 +31,6 @@ body {
   background: linear-gradient(#ffd6e8, #fff0f5);
 }
 
-/* 🧸 SECCIÓN IZQUIERDA: BEBÉ FIJA */
 .seccion-bebe {
   flex: 1;
   display: flex;
@@ -46,7 +49,6 @@ body {
   box-shadow: 0 15px 30px rgba(0, 0, 0, .15);
 }
 
-/* 🕹️ SECCIÓN DERECHA: INTERFAZ DINÁMICA */
 .seccion-interfaz {
   flex: 1.2;
   display: flex;
@@ -74,11 +76,9 @@ button {
 }
 button:hover { background: #e03973; }
 
-/* 📧 PANTALLAS */
 #invitacion { display: flex; flex-direction: column; align-items: center; }
 #juego { display: none; width: 100%; }
 
-/* 🎁 ICONO CAJA SORPRESA INICIAL */
 .caja-sorpresa-icono {
   font-size: 80px;
   margin: 20px 0;
@@ -89,7 +89,6 @@ button:hover { background: #e03973; }
   50% { transform: translateY(-15px); }
 }
 
-/* 🔒 PANTALLA LOGIN INTERNO */
 #login { margin-top: 20px; }
 #nombre {
   padding: 12px;
@@ -100,10 +99,9 @@ button:hover { background: #e03973; }
   outline: none;
 }
 
-/* 🎛️ CONTENEDOR DE LAS 100 CAJAS (Con Scroll Eficiente) */
 .contenedor-grid {
-  max-height: 55vh; /* Evita que ocupe toda la pantalla */
-  overflow-y: auto; /* Activa el scroll vertical */
+  max-height: 55vh;
+  overflow-y: auto;
   padding: 15px;
   background: rgba(255, 255, 255, 0.4);
   border-radius: 15px;
@@ -141,10 +139,11 @@ button:hover { background: #e03973; }
   background: #ffb3d1;
 }
 .box.opened {
-  background: #ff4d88 !important;
-  color: white !important;
+  background: #e2a0bb !important;
+  color: #666 !important;
+  border-color: #b58296;
   pointer-events: none;
-  font-size: 11px;
+  font-size: 10px;
 }
 .box.opening {
   transform: scale(1.2);
@@ -152,7 +151,6 @@ button:hover { background: #e03973; }
   color: white;
 }
 
-/* ☁️ NUBES DE FONDO */
 .cloud {
   position: absolute;
   width: 120px;
@@ -165,7 +163,6 @@ button:hover { background: #e03973; }
   to { transform: translateX(100vw); }
 }
 
-/* 📊 PANEL DE REGISTROS (Oculto para invitados) */
 #panel {
   position: fixed;
   right: 15px;
@@ -176,7 +173,7 @@ button:hover { background: #e03973; }
   border-radius: 12px;
   padding: 15px;
   font-size: 13px;
-  display: none; /* Se activa dinámicamente con ?admin=true */
+  display: none;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   max-height: 80vh;
   overflow-y: auto;
@@ -188,7 +185,6 @@ button:hover { background: #e03973; }
   border-bottom: 1px dashed #ffd6e8;
 }
 
-/* 📱 ADAPTACIÓN PARA CELULARES */
 @media(max-width:900px){
   .contenedor-principal { flex-direction: column; }
   .seccion-bebe { flex: none; padding-top: 30px; }
@@ -213,6 +209,7 @@ button:hover { background: #e03973; }
 
   <div class="seccion-interfaz">
     
+    <!-- PANTALLA 1: INVITACIÓN -->
     <div id="invitacion">
       <h1>🎀 Naila Victoria 🎀</h1>
       <h2>Te doy la bienvenida a mi Baby Shower 💕</h2>
@@ -220,9 +217,11 @@ button:hover { background: #e03973; }
       <button onclick="entrar()">Entrar 💌</button>
     </div>
 
+    <!-- PANTALLA 2: JUEGO -->
     <div id="juego">
       <h1>🎀 Naila Victoria 🎀</h1>
       
+      <!-- Sub-pantalla A: Formulario de Nombre -->
       <div id="login">
         <p>Introduce tu nombre para empezar a jugar 👇</p>
         <div class="caja-sorpresa-icono">🎁</div>
@@ -231,8 +230,9 @@ button:hover { background: #e03973; }
         <button onclick="iniciarJuego()">Entrar al Sorteo 🎁</button>
       </div>
 
+      <!-- Sub-pantalla B: El tablero de las 100 cajas -->
       <div id="contenedor-tablero" style="display: none;">
-        <p>¡Elige una sola cajita sorpresa! 🎁</p>
+        <p id="instruccion-juego">¡Elige una sola cajita sorpresa! 🎁</p>
         <div class="contenedor-grid">
           <div class="grid" id="grid"></div>
         </div>
@@ -243,6 +243,7 @@ button:hover { background: #e03973; }
   </div>
 </div>
 
+<!-- 📊 PANEL DE REGISTRO (Solo Admin visible vía URL) -->
 <div id="panel">
   <h3 style="color:#ff4d88; margin-top:0;">📊 Registro de Premios</h3>
   <div id="registros"></div>
@@ -253,6 +254,21 @@ button:hover { background: #e03973; }
 </audio>
 
 <script>
+// 💾 CONFIGURACIÓN EXACTA DE TU FIREBASE (image_9d36d0.png)
+const firebaseConfig = {
+  apiKey: "AIzaSyANucv8E4VBviYnoRuidfKy61Hp9UlZLYw",
+  authDomain: "baby-shower-de-naila-victoria.firebaseapp.com",
+  projectId: "baby-shower-de-naila-victoria",
+  storageBucket: "baby-shower-de-naila-victoria.firebasestorage.app",
+  messagingSenderId: "66949995186",
+  appId: "1:66949995186:web:636053a41390012f1987ab",
+  measurementId: "G-L2DMEPNNLW"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const invitacion = document.getElementById("invitacion");
 const juego = document.getElementById("juego");
 const loginSection = document.getElementById("login");
@@ -262,32 +278,23 @@ const panel = document.getElementById("panel");
 const registros = document.getElementById("registros");
 
 let nombre = "";
-let abiertas = JSON.parse(localStorage.getItem("abiertas")) || {};
+let abiertas = {}; 
+let yaJugo = false;
 
-// Verificar si eres el administrador mediante la URL (?admin=true)
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('admin') === 'true') {
   panel.style.display = "block";
 }
 
 let premios = [
-  "🍼 Pañales + pañitos + tetero",
-  "🛁 Kit baño bebé",
-  "👕 Ropa bebé",
-  "🧸 Juguetes",
-  "🛏️ Cobija suave",
-  "🧴 Aseo bebé",
-  "🎀 Set ropa",
-  "🧦 Medias + baberos",
-  "👶 Kit recién nacido",
-  "🏆 Coche bebé",
-  "🏆 Cuna bebé"
+  "🍼 Pañales + pañitos + tetero", "🛁 Kit baño bebé", "👕 Ropa bebé", 
+  "🧸 Juguetes", "🛏️ Cobija suave", "🧴 Aseo bebé", "🎀 Set ropa", 
+  "🧦 Medias + baberos", "👶 Kit recién nacido", "🏆 Coche bebé", "🏆 Cuna bebé"
 ];
 
 function entrar() {
   invitacion.style.display = "none";
   juego.style.display = "block";
-  actualizarPanel(); // Carga registros previos si eres admin
 }
 
 function iniciarJuego() {
@@ -296,54 +303,72 @@ function iniciarJuego() {
   
   loginSection.style.display = "none";
   tableroSection.style.display = "block";
-  crearCajitas();
+  
+  escucharCajas();
 }
 
-function crearCajitas() {
-  grid.innerHTML = ""; // Limpiar por seguridad
+function escucharCajas() {
+  // 🔗 Conectado exactamente a tu colección real "cajitas" (image_9d42a9.png)
+  db.collection("cajitas").doc("cajasOpen").onSnapshot((doc) => {
+    if (doc.exists) {
+      abiertas = doc.data();
+    } else {
+      abiertas = {};
+    }
+    dibujarTablero();
+    actualizarPanel();
+  });
+}
+
+function dibujarTablero() {
+  grid.innerHTML = "";
   
+  yaJugo = Object.values(abiertas).some(caja => caja.nombre.toLowerCase() === nombre.toLowerCase());
+  if(yaJugo) {
+    document.getElementById("instruccion-juego").innerHTML = "¡Ya elegiste tu regalo! Gracias por participar 💕";
+  }
+
   for (let i = 1; i <= 100; i++) {
     let box = document.createElement("div");
     box.classList.add("box");
 
-    // Si la caja ya fue abierta anteriormente, muestra el premio directamente bloqueada
     if (abiertas[i]) {
-      box.innerText = abiertas[i].premio;
-      box.classList.add("opened");
-    } else {
-      // Si está cerrada, muestra inicialmente el ícono del regalo y el número
-      box.innerText = `🎁 ${i}`;
-    }
-
-    box.onclick = () => {
-      if (abiertas[i]) return;
-
-      box.classList.add("opening");
-
-      setTimeout(() => {
-        const premio = premios[Math.floor(Math.random() * premios.length)];
-
-        box.innerText = premio;
-        box.classList.remove("opening");
+      if (abiertas[i].nombre.toLowerCase() === nombre.toLowerCase()) {
+        box.innerHTML = `⭐ ¡Tu premio!<br><b>${abiertas[i].premio}</b>`;
+        box.style.background = "#ff4d88";
+        box.style.color = "white";
+      } else {
+        box.innerHTML = `❌<br>Tomada por<br>${abiertas[i].nombre}`;
         box.classList.add("opened");
-
-        document.getElementById("sonido").play().catch(()=>{});
-
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-
-        abiertas[i] = { nombre, premio };
-        localStorage.setItem("abiertas", JSON.stringify(abiertas));
-
-        actualizarPanel();
-      }, 700);
-    };
-
+      }
+    } else {
+      box.innerText = `🎁 ${i}`;
+      
+      if (!yaJugo) {
+        box.onclick = () => abrirCaja(i, box);
+      } else {
+        box.style.cursor = "default";
+      }
+    }
     grid.appendChild(box);
   }
+}
+
+function abrirCaja(numero, elementoBox) {
+  elementoBox.classList.add("opening");
+
+  setTimeout(() => {
+    const premioElegido = premios[Math.floor(Math.random() * premios.length)];
+
+    document.getElementById("sonido").play().catch(()=>{});
+    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+
+    // Guardado directo en tu colección "cajitas" en la nube
+    db.collection("cajitas").doc("cajasOpen").set({
+      [numero]: { nombre: nombre, premio: premioElegido }
+    }, { merge: true });
+
+  }, 700);
 }
 
 function actualizarPanel() {
