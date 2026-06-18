@@ -117,33 +117,36 @@ button:hover { background: #e03973; }
   margin: auto;
 }
 
+/* 🎨 NUEVO DISEÑO INSPIRADO EN LAS CAJITAS ROSADAS DE image_9cc9b3.jpg */
 .box {
-  background: #ffd6e8;
-  border: 2px solid #ff4d88;
+  background: #fbcce0; /* Tono rosado tierno de fondo */
+  border: 2px solid #f29cb7; /* Borde rosa suave combinado */
   padding: 15px 5px;
-  border-radius: 10px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: 13px;
   font-weight: bold;
-  color: #ff4d88;
+  color: #d14973; /* Texto en rosa oscuro delicado */
   transition: all 0.3s ease;
-  box-shadow: 0 3px 6px rgba(255, 77, 136, 0.2);
+  box-shadow: 0 4px 8px rgba(242, 156, 183, 0.3);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 50px;
+  min-height: 55px;
 }
 .box:hover {
-  transform: scale(1.05);
-  background: #ffb3d1;
+  transform: scale(1.06);
+  background: #f9b6cf; /* Rosa un poco más intenso al pasar el mouse */
+  border-color: #e57ea2;
 }
 .box.opened {
-  background: #e2a0bb !important;
-  color: #666 !important;
-  border-color: #b58296;
+  background: #e2b3c4 !important; /* Gris rosado apagado para las cajas ocupadas */
+  color: #7f606c !important;
+  border-color: #bc93a3;
   pointer-events: none;
   font-size: 10px;
+  box-shadow: none;
 }
 .box.opening {
   transform: scale(1.2);
@@ -163,25 +166,21 @@ button:hover { background: #e03973; }
   to { transform: translateX(100vw); }
 }
 
+/* 📊 ESTILOS EXCLUSIVOS PARA TU PANEL DE ADMINISTRACIÓN */
 #panel {
-  position: fixed;
-  right: 15px;
-  top: 15px;
-  width: 260px;
   background: white;
-  border: 2px solid #ff4d88;
-  border-radius: 12px;
-  padding: 15px;
-  font-size: 13px;
+  border: 3px solid #ff4d88;
+  border-radius: 20px;
+  padding: 30px;
+  font-size: 16px;
   display: none;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  max-height: 80vh;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   overflow-y: auto;
-  z-index: 10;
+  text-align: left;
 }
 #registros div {
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
   border-bottom: 1px dashed #ffd6e8;
 }
 
@@ -199,7 +198,7 @@ button:hover { background: #e03973; }
 
 <body>
 
-<div class="contenedor-principal">
+<div class="contenedor-principal" id="bloque-juego">
   <img class="cloud" style="top:20px; left:0;" src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
   <img class="cloud" style="top:150px; left:-80px; animation-delay:5s;" src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
 
@@ -243,9 +242,10 @@ button:hover { background: #e03973; }
   </div>
 </div>
 
-<!-- 📊 PANEL DE REGISTRO (Solo Admin visible vía URL) -->
+<!-- 📊 PANTALLA EXCLUSIVA DE ADMIN (Limpia y a pantalla completa para ti) -->
 <div id="panel">
-  <h3 style="color:#ff4d88; margin-top:0;">📊 Registro de Premios</h3>
+  <h2 style="color:#ff4d88; margin-top:0; text-align: center;">📊 Registro Oficial de Premios</h2>
+  <p style="text-align: center; font-size: 14px; margin-bottom: 25px;">Aquí verás quién va participando y qué ganaron en tiempo real ✨</p>
   <div id="registros"></div>
 </div>
 
@@ -254,7 +254,7 @@ button:hover { background: #e03973; }
 </audio>
 
 <script>
-// 💾 CONFIGURACIÓN EXACTA DE TU FIREBASE (image_9d36d0.png)
+// 💾 CONFIGURACIÓN EXTRAÍDA DE TU ARCHIVO DE FIREBASE (image_9d36d0.png)
 const firebaseConfig = {
   apiKey: "AIzaSyANucv8E4VBviYnoRuidfKy61Hp9UlZLYw",
   authDomain: "baby-shower-de-naila-victoria.firebaseapp.com",
@@ -281,9 +281,22 @@ let nombre = "";
 let abiertas = {}; 
 let yaJugo = false;
 
+// 🔒 LÓGICA INTELIGENTE DE ADMINISTRADORA
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('admin') === 'true') {
+  // Desaparece toda la interfaz del juego para que tú no juegues
+  document.getElementById("bloque-juego").style.display = "none";
+  
+  // Acomoda tu panel de control en pantalla completa, centrado y limpio
   panel.style.display = "block";
+  panel.style.position = "relative";
+  panel.style.margin = "40px auto";
+  panel.style.width = "90%";
+  panel.style.maxWidth = "650px";
+  panel.style.maxHeight = "85vh";
+  
+  // Empieza a cargar los datos de los participantes de inmediato
+  escucharCajas();
 }
 
 let premios = [
@@ -308,14 +321,17 @@ function iniciarJuego() {
 }
 
 function escucharCajas() {
-  // 🔗 Conectado exactamente a tu colección real "cajitas" (image_9d42a9.png)
+  // 🔗 Sincronizado directo con tu colección "cajitas" (image_9d42a9.png)
   db.collection("cajitas").doc("cajasOpen").onSnapshot((doc) => {
     if (doc.exists) {
       abiertas = doc.data();
     } else {
       abiertas = {};
     }
-    dibujarTablero();
+    // Solo dibuja el tablero si no eres la administradora
+    if (urlParams.get('admin') !== 'true') {
+      dibujarTablero();
+    }
     actualizarPanel();
   });
 }
@@ -363,7 +379,6 @@ function abrirCaja(numero, elementoBox) {
     document.getElementById("sonido").play().catch(()=>{});
     confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
 
-    // Guardado directo en tu colección "cajitas" en la nube
     db.collection("cajitas").doc("cajasOpen").set({
       [numero]: { nombre: nombre, premio: premioElegido }
     }, { merge: true });
@@ -373,9 +388,16 @@ function abrirCaja(numero, elementoBox) {
 
 function actualizarPanel() {
   registros.innerHTML = "";
-  Object.keys(abiertas).forEach(k => {
+  const keys = Object.keys(abiertas).sort((a, b) => a - b); // Ordena los registros por número de caja
+  
+  if (keys.length === 0) {
+    registros.innerHTML = `<p style="text-align:center; color:#999; font-style:italic;">Aún ningún participante ha seleccionado una cajita...</p>`;
+    return;
+  }
+
+  keys.forEach(k => {
     let d = document.createElement("div");
-    d.innerHTML = `<strong>Caja ${k}</strong><br>👤 ${abiertas[k].nombre}<br>🏆 ${abiertas[k].premio}`;
+    d.innerHTML = `<strong>🎁 Caja número ${k}</strong><br>👤 <b>Invitado:</b> ${abiertas[k].nombre}<br>🏆 <b>Regalo asignado:</b> ${abiertas[k].premio}`;
     registros.appendChild(d);
   });
 }
