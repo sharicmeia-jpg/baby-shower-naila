@@ -264,36 +264,46 @@
             }
         }
 
-        function cargarTablero() {
-            const contenedorCajas = document.getElementById('bloque-cajas');
-            contenedorCajas.innerHTML = "";
+function cargarTablero() {
+    const contenedorCajas = document.getElementById('bloque-cajas');
+    contenedorCajas.innerHTML = "";
 
-            db.collection("cajitas").orderBy("combo").get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    const datos = doc.data();
-                    const numero = datos.combo;
-                    const estaTomada = datos.reservado;
+    // 1. Forzamos a que se dibujen las 100 cajas SORPRESA en la pantalla al instante
+    for (let i = 1; i <= 100; i++) {
+        const regaloAsignado = LISTA_REGALOS[(i - 1) % LISTA_REGALOS.length];
 
-                    const regaloAsignado = LISTA_REGALOS[(numero - 1) % LISTA_REGALOS.length];
+        const boton = document.createElement('button');
+        boton.className = 'caja-btn';
+        boton.id = `caja-dom-${i}`; 
 
-                    const boton = document.createElement('button');
-                    boton.className = `caja-btn ${estaTomada ? 'tomada' : ''}`;
-                    boton.disabled = estaTomada;
+        // Aquí quitamos el número para que sea 100% sorpresa misteriosa
+        boton.innerHTML = `
+            <img src="${NOMBRE_IMAGEN_ROSA}" class="caja-img" alt="Caja Sorpresa">
+        `;
+        
+        boton.onclick = () => procesarEleccion(`caja_${i}`, i, regaloAsignado);
+        contenedorCajas.appendChild(boton);
+    }
 
-                    boton.innerHTML = `
-                        <img src="${NOMBRE_IMAGEN_ROSA}" class="caja-img" alt="Caja ${numero}">
-                        <div class="caja-numero">${numero}</div>
-                        ${estaTomada ? '<div class="tomada-etiqueta">TOMADA 💕</div>' : ''}
-                    `;
+    // 2. Revisamos Firebase en tiempo real para ver cuáles ya están tomadas y marcarlas
+    db.collection("cajitas").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const datos = doc.data();
+            const numero = datos.combo;
+            const estaTomada = datos.reservado;
 
-                    if (!estaTomada) {
-                        boton.onclick = () => procesarEleccion(doc.id, numero, regaloAsignado);
-                    }
-
-                    contenedorCajas.appendChild(boton);
-                });
-            });
-        }
+            if (estaTomada) {
+                const botonExistente = document.getElementById(`caja-dom-${numero}`);
+                if (botonExistente) {
+                    botonExistente.className = 'caja-btn tomada';
+                    botonExistente.disabled = true;
+                    // El letrero de "TOMADA" seguirá apareciendo para que no choquen
+                    botonExistente.innerHTML += '<div class="tomada-etiqueta">TOMADA 💕</div>';
+                }
+            }
+        });
+    });
+}
 
         function procesarEleccion(docId, numero, regalo) {
             db.collection("cajitas").doc(docId).update({
