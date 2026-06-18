@@ -1,407 +1,204 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baby Shower Naila 💕</title>
-
-<!-- Confeti -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-<!-- Firebase SDKs necesarios para Tiempo Real -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #ffe6f0;
-  text-align: center;
-  min-height: 100vh;
-}
-
-.contenedor-principal {
-  display: flex;
-  flex-direction: row;
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(#ffd6e8, #fff0f5);
-}
-
-.seccion-bebe {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  z-index: 2;
-}
-
-.bebe {
-  width: 450px;
-  max-width: 90%;
-  height: auto;
-  border-radius: 30px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, .15);
-}
-
-.seccion-interfaz {
-  flex: 1.2;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  z-index: 2;
-}
-
-h1 { color: #ff4d88; font-size: 42px; margin-bottom: 5px; }
-h2 { color: #ff7aa2; font-size: 26px; margin-top: 0; }
-p { font-size: 18px; color: #666; }
-
-button {
-  background: #ff4d88;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
-  transition: background 0.2s;
-}
-button:hover { background: #e03973; }
-
-#invitacion { display: flex; flex-direction: column; align-items: center; }
-#juego { display: none; width: 100%; }
-
-.caja-sorpresa-icono {
-  font-size: 80px;
-  margin: 20px 0;
-  animation: bounce 2s infinite;
-}
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
-}
-
-#login { margin-top: 20px; }
-#nombre {
-  padding: 12px;
-  border: 2px solid #ff4d88;
-  border-radius: 10px;
-  font-size: 16px;
-  text-align: center;
-  outline: none;
-}
-
-.contenedor-grid {
-  max-height: 55vh;
-  overflow-y: auto;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 15px;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-  margin-top: 15px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-  gap: 10px;
-  max-width: 550px;
-  margin: auto;
-}
-
-/* 🎨 NUEVO DISEÑO INSPIRADO EN LAS CAJITAS ROSADAS DE image_9cc9b3.jpg */
-.box {
-  background: #fbcce0; /* Tono rosado tierno de fondo */
-  border: 2px solid #f29cb7; /* Borde rosa suave combinado */
-  padding: 15px 5px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: bold;
-  color: #d14973; /* Texto en rosa oscuro delicado */
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(242, 156, 183, 0.3);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 55px;
-}
-.box:hover {
-  transform: scale(1.06);
-  background: #f9b6cf; /* Rosa un poco más intenso al pasar el mouse */
-  border-color: #e57ea2;
-}
-.box.opened {
-  background: #e2b3c4 !important; /* Gris rosado apagado para las cajas ocupadas */
-  color: #7f606c !important;
-  border-color: #bc93a3;
-  pointer-events: none;
-  font-size: 10px;
-  box-shadow: none;
-}
-.box.opening {
-  transform: scale(1.2);
-  background: #ff4d88;
-  color: white;
-}
-
-.cloud {
-  position: absolute;
-  width: 120px;
-  opacity: 0.3;
-  animation: move 25s linear infinite;
-  z-index: 1;
-}
-@keyframes move {
-  from { transform: translateX(-200px); }
-  to { transform: translateX(100vw); }
-}
-
-/* 📊 ESTILOS EXCLUSIVOS PARA TU PANEL DE ADMINISTRACIÓN */
-#panel {
-  background: white;
-  border: 3px solid #ff4d88;
-  border-radius: 20px;
-  padding: 30px;
-  font-size: 16px;
-  display: none;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  overflow-y: auto;
-  text-align: left;
-}
-#registros div {
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed #ffd6e8;
-}
-
-@media(max-width:900px){
-  .contenedor-principal { flex-direction: column; }
-  .seccion-bebe { flex: none; padding-top: 30px; }
-  .bebe { width: 250px; }
-  .seccion-interfaz { padding: 20px; flex: none; }
-  h1 { font-size: 32px; }
-  h2 { font-size: 20px; }
-  .contenedor-grid { max-height: 40vh; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Shower Naila Victoria</title>
+    <style>
+        body {
+            background-color: #ffeef2;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            color: #d65a7f;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* Contenedor de la caja usando tu imagen base */
+        .caja-btn {
+            background: none;
+            border: none;
+            position: relative;
+            width: 100px;
+            height: 110px;
+            cursor: pointer;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+        .caja-btn:hover {
+            transform: scale(1.05);
+        }
+        /* Imagen de fondo de la cajita (como image_9c556e.png) */
+        .caja-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        /* Número rosa colocado exactamente sobre el corazón */
+        .caja-numero {
+            position: absolute;
+            bottom: 24px; /* Ajusta esta altura si tu imagen real es distinta */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: bold;
+            color: #e57399; /* Color Rosa de la imagen */
+            text-shadow: 1px 1px 0px #fff;
+        }
+        .tomada {
+            filter: grayscale(1) opacity(0.6);
+            cursor: not-allowed;
+        }
+        .tomada-etiqueta {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #d65a7f;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+        /* Pantalla modal para cuando abre la cajita */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 238, 242, 0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-contenido {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(214, 90, 127, 0.2);
+            max-width: 400px;
+            width: 80%;
+            text-align: center;
+            border: 3px solid #ffcad4;
+        }
+        .modal-contenido h2 {
+            color: #d65a7f;
+            margin-top: 0;
+        }
+        .regalo-texto {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+            background: #fff0f3;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed #d65a7f;
+        }
+        .btn-cerrar {
+            background: #d65a7f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="contenedor-principal" id="bloque-juego">
-  <img class="cloud" style="top:20px; left:0;" src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
-  <img class="cloud" style="top:150px; left:-80px; animation-delay:5s;" src="https://cdn-icons-png.flaticon.com/512/414/414927.png">
-
-  <div class="seccion-bebe">
-    <img class="bebe" src="img/bebe.png" alt="Bebé Naila">
-  </div>
-
-  <div class="seccion-interfaz">
+    <h1>✨ ¡Elige una Cajita para Naila ! ✨</h1>
     
-    <!-- PANTALLA 1: INVITACIÓN -->
-    <div id="invitacion">
-      <h1>🎀 Naila 🎀</h1>
-      <h2>Te doy la bienvenida a mi Baby Shower 💕</h2>
-      <p>Estás invitado/@ a una experiencia mágica ✨</p>
-      <button onclick="entrar()">Entrar 💌</button>
-    </div>
+    <div class="grid-container" id="tablero"></div>
 
-    <!-- PANTALLA 2: JUEGO -->
-    <div id="juego">
-      <h1>🎀 Naila 🎀</h1>
-      
-      <!-- Sub-pantalla A: Formulario de Nombre -->
-      <div id="login">
-        <p>Introduce tu nombre para empezar a jugar 👇</p>
-        <div class="caja-sorpresa-icono">🎁</div>
-        <input id="nombre" placeholder="Tu nombre completo" autocomplete="off">
-        <br><br>
-        <button onclick="iniciarJuego()">Entrar al Sorteo 🎁</button>
-      </div>
-
-      <!-- Sub-pantalla B: El tablero de las 100 cajas -->
-      <div id="contenedor-tablero" style="display: none;">
-        <p id="instruccion-juego">¡Elige una sola cajita sorpresa! 🎁</p>
-        <div class="contenedor-grid">
-          <div class="grid" id="grid"></div>
+    <!-- Ventana Emergente (Sola la caja elegida y su regalo) -->
+    <div class="modal" id="modalRegalo">
+        <div class="modal-contenido">
+            <h2>¡Felicidades! 🎉</h2>
+            <p>Has abierto la cajita número <span id="numCajaModal"></span></p>
+            <div id="cajaVisualModal"></div>
+            <p>El regalo que te tocó llevar es:</p>
+            <div class="regalo-texto" id="textoRegaloModal"></div>
+            <button class="btn-cerrar" onclick="cerrarModal()">¡Genial, gracias!</button>
         </div>
-      </div>
-
     </div>
 
-  </div>
-</div>
+    <script>
+        // Cambia este link por la URL real de tu imagen de la cajita (image_9c556e.png)
+        const URL_IMAGEN_CAJA = "cajita-rosa.png"; 
 
-<!-- 📊 PANTALLA EXCLUSIVA DE ADMIN (Limpia y a pantalla completa para ti) -->
-<div id="panel">
-  <h2 style="color:#ff4d88; margin-top:0; text-align: center;">📊 Registro Oficial de Premios</h2>
-  <p style="text-align: center; font-size: 14px; margin-bottom: 25px;">Aquí verás quién va participando y qué ganaron en tiempo real ✨</p>
-  <div id="registros"></div>
-</div>
+        // Simulación de regalos de la base de datos
+        const regalos = [
+            "Kit de aseo + pañitos + pañales", "Pañales Etapa 1", "Ropita de bebé", 
+            "Biberón y teteros", "Cobijita suave", "Toalla con capucha"
+        ];
 
-<audio id="sonido">
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a4b1b1.mp3">
-</audio>
+        function dibujarTablero() {
+            const tablero = document.getElementById('tablero');
+            tablero.innerHTML = "";
 
-<script>
-// 💾 CONFIGURACIÓN EXTRAÍDA DE TU ARCHIVO DE FIREBASE (image_9d36d0.png)
-const firebaseConfig = {
-  apiKey: "AIzaSyANucv8E4VBviYnoRuidfKy61Hp9UlZLYw",
-  authDomain: "baby-shower-de-naila-victoria.firebaseapp.com",
-  projectId: "baby-shower-de-naila-victoria",
-  storageBucket: "baby-shower-de-naila-victoria.firebasestorage.app",
-  messagingSenderId: "66949995186",
-  appId: "1:66949995186:web:636053a41390012f1987ab",
-  measurementId: "G-L2DMEPNNLW"
-};
+            for (let i = 1; i <= 16; i++) {
+                // Aquí simulamos si de la 5 en adelante ya están tomadas como en watermarked_img_5911019599203181824.png
+                let estaTomada = i >= 5 && i !== 7 && i !== 8 && i !== 12 && i !== 13 && i !== 15; 
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+                const boton = document.createElement('button');
+                boton.className = `caja-btn ${estaTomada ? 'tomada' : ''}`;
+                boton.disabled = estaTomada;
+                
+                // Estructura idéntica a tu diseño: Imagen + Número rosa en el corazón
+                boton.innerHTML = `
+                    <img src="${URL_IMAGEN_CAJA}" class="caja-img" alt="Caja ${i}">
+                    <div class="caja-numero">${i}</div>
+                    ${estaTomada ? '<div class="tomada-etiqueta">TOMADA 💕</div>' : ''}
+                `;
 
-const invitacion = document.getElementById("invitacion");
-const juego = document.getElementById("juego");
-const loginSection = document.getElementById("login");
-const tableroSection = document.getElementById("contenedor-tablero");
-const grid = document.getElementById("grid");
-const panel = document.getElementById("panel");
-const registros = document.getElementById("registros");
+                if (!estaTomada) {
+                    boton.onclick = () => abrirCajita(i);
+                }
 
-let nombre = "";
-let abiertas = {}; 
-let yaJugo = false;
+                tablero.appendChild(boton);
+            }
+        }
 
-// 🔒 LÓGICA INTELIGENTE DE ADMINISTRADORA
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('admin') === 'true') {
-  // Desaparece toda la interfaz del juego para que tú no juegues
-  document.getElementById("bloque-juego").style.display = "none";
-  
-  // Acomoda tu panel de control en pantalla completa, centrado y limpio
-  panel.style.display = "block";
-  panel.style.position = "relative";
-  panel.style.margin = "40px auto";
-  panel.style.width = "90%";
-  panel.style.maxWidth = "650px";
-  panel.style.maxHeight = "85vh";
-  
-  // Empieza a cargar los datos de los participantes de inmediato
-  escucharCajas();
-}
+        function abrirCajita(numero) {
+            // Selecciona un regalo de la lista
+            const regaloAsignado = regalos[(numero - 1) % regalos.length];
 
-let premios = [
-  "🍼 Pañales + pañitos + tetero", "🛁 Kit baño bebé", "👕 Ropa bebé", 
-  "🧸 Juguetes", "🛏️ Cobija suave", "🧴 Aseo bebé", "🎀 Set ropa", 
-  "🧦 Medias + baberos", "👶 Kit recién nacido", "🏆 Coche bebé", "🏆 Cuna bebé"
-];
+            // Llena los datos en la ventana emergente aislada
+            document.getElementById('numCajaModal').innerText = numero;
+            document.getElementById('textoRegaloModal').innerText = `🎁 ${regaloAsignado}`;
+            
+            // Muestra la caja seleccionada sola adentro del modal
+            document.getElementById('cajaVisualModal').innerHTML = `
+                <div style="position:relative; width:80px; margin:0 auto; transform: scale(1.2); margin-bottom:15px;">
+                    <img src="${URL_IMAGEN_CAJA}" style="width:100%;">
+                    <div style="position:absolute; bottom:18px; left:50%; transform:translateX(-50%); font-weight:bold; color:#e57399;">${numero}</div>
+                </div>
+            `;
 
-function entrar() {
-  invitacion.style.display = "none";
-  juego.style.display = "block";
-}
+            // Abre la pantalla de felicitación
+            document.getElementById('modalRegalo').style.display = 'flex';
+        }
 
-function iniciarJuego() {
-  nombre = document.getElementById("nombre").value.trim();
-  if (nombre === "") return alert("Por favor, escribe tu nombre para continuar.");
-  
-  loginSection.style.display = "none";
-  tableroSection.style.display = "block";
-  
-  escucharCajas();
-}
+        function cerrarModal() {
+            document.getElementById('modalRegalo').style.display = 'none';
+            // Aquí puedes recargar o bloquear el juego para que no jueguen más
+            alert("¡Tu regalo ha sido registrado! Muchas gracias.");
+        }
 
-function escucharCajas() {
-  // 🔗 Sincronizado directo con tu colección "cajitas" (image_9d42a9.png)
-  db.collection("cajitas").doc("cajasOpen").onSnapshot((doc) => {
-    if (doc.exists) {
-      abiertas = doc.data();
-    } else {
-      abiertas = {};
-    }
-    // Solo dibuja el tablero si no eres la administradora
-    if (urlParams.get('admin') !== 'true') {
-      dibujarTablero();
-    }
-    actualizarPanel();
-  });
-}
-
-function dibujarTablero() {
-  grid.innerHTML = "";
-  
-  yaJugo = Object.values(abiertas).some(caja => caja.nombre.toLowerCase() === nombre.toLowerCase());
-  if(yaJugo) {
-    document.getElementById("instruccion-juego").innerHTML = "¡Ya elegiste tu regalo! Gracias por participar 💕";
-  }
-
-  for (let i = 1; i <= 100; i++) {
-    let box = document.createElement("div");
-    box.classList.add("box");
-
-    if (abiertas[i]) {
-      if (abiertas[i].nombre.toLowerCase() === nombre.toLowerCase()) {
-        box.innerHTML = `⭐ ¡Tu premio!<br><b>${abiertas[i].premio}</b>`;
-        box.style.background = "#ff4d88";
-        box.style.color = "white";
-      } else {
-        box.innerHTML = `❌<br>Tomada por<br>${abiertas[i].nombre}`;
-        box.classList.add("opened");
-      }
-    } else {
-      box.innerText = `🎁 ${i}`;
-      
-      if (!yaJugo) {
-        box.onclick = () => abrirCaja(i, box);
-      } else {
-        box.style.cursor = "default";
-      }
-    }
-    grid.appendChild(box);
-  }
-}
-
-function abrirCaja(numero, elementoBox) {
-  elementoBox.classList.add("opening");
-
-  setTimeout(() => {
-    const premioElegido = premios[Math.floor(Math.random() * premios.length)];
-
-    document.getElementById("sonido").play().catch(()=>{});
-    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-
-    db.collection("cajitas").doc("cajasOpen").set({
-      [numero]: { nombre: nombre, premio: premioElegido }
-    }, { merge: true });
-
-  }, 700);
-}
-
-function actualizarPanel() {
-  registros.innerHTML = "";
-  const keys = Object.keys(abiertas).sort((a, b) => a - b); // Ordena los registros por número de caja
-  
-  if (keys.length === 0) {
-    registros.innerHTML = `<p style="text-align:center; color:#999; font-style:italic;">Aún ningún participante ha seleccionado una cajita...</p>`;
-    return;
-  }
-
-  keys.forEach(k => {
-    let d = document.createElement("div");
-    d.innerHTML = `<strong>🎁 Caja número ${k}</strong><br>👤 <b>Invitado:</b> ${abiertas[k].nombre}<br>🏆 <b>Regalo asignado:</b> ${abiertas[k].premio}`;
-    registros.appendChild(d);
-  });
-}
-</script>
-
+        // Inicia el tablero al cargar
+        dibujarTablero();
+    </script>
 </body>
 </html>
