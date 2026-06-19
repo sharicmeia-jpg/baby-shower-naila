@@ -97,12 +97,14 @@
             "Termómetro digital para bebé, cortaúñas especial, aspirador nasal, un set de bodys y pañales"
         ];
 
-        // AQUÍ ESTÁ TU CONFIGURACIÓN AUTOMÁTICA
+        // TU CONFIGURACIÓN REAL DE FIREBASE
         const firebaseConfig = {
+            apiKey: "AIzaSyANucv8E4VBviYnoRuidfKy61Hp9UlZLYw",
             authDomain: "baby-shower-de-naila-victoria.firebaseapp.com",
             projectId: "baby-shower-de-naila-victoria",
-            storageBucket: "baby-shower-de-naila-victoria.appspot.com",
-            messagingSenderId: "66949995186"
+            storageBucket: "baby-shower-de-naila-victoria.firebasestorage.app",
+            messagingSenderId: "66949995186",
+            appId: "1:66949995186:web:636053a41390012f1987ab"
         };
         
         firebase.initializeApp(firebaseConfig);
@@ -135,6 +137,9 @@
             });
 
             document.getElementById('conteo-cajas').innerText = `Cajas seleccionadas: ${tomadas} de 100`;
+        }, (error) => {
+            console.error("Error cargando datos: ", error);
+            document.getElementById('conteo-cajas').innerText = "Error al conectar con Firebase.";
         });
     </script>
 </body>
